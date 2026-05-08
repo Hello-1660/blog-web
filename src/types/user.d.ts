@@ -1,7 +1,7 @@
 /**
  * 用户信息
  */
-export type userInfo = {
+export type UserInfo = {
   // 用户邮箱
   email: string;
   // 用户昵称
@@ -21,9 +21,22 @@ export type userInfo = {
 /**
  * 用户登录信息
  */
-export type userLoginDto = {
+export type UserLoginDto = {
   // 用户邮箱
   email: string;
   // 密码
   password: string;
+}
+
+
+
+export type UserRegisterDto = {
+  // 用户昵称
+  nickname: string;
+  // 用户邮箱
+  email: string;
+  // 密码
+  password: string;
+  // 确认密码
+  confirmPassword: string;
 }
