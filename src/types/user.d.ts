@@ -21,6 +21,16 @@ export type UserInfo = {
 /**
  * 用户登录信息
  */
+export type UserLogin = UserInfo & {
+  // 用户令牌
+  token: string;
+}
+
+
+
+/**
+ * 用户登录信息
+ */
 export type UserLoginDto = {
   // 用户邮箱
   email: string;

@@ -1,13 +1,13 @@
-import type { UserInfo, UserLoginDto, UserRegisterDto } from '@/types/user'
+import type { UserInfo, UserLogin, UserLoginDto, UserRegisterDto } from '@/types/user'
 import type { Result } from '@/types/api'
 import http from '@/utils/http'
 
 /**
  * 用户登录
  * @param userLoginDto 用户登录信息
- * @returns 令牌
+ * @returns 用户信息 + token
  */
-export function login(userLoginDto: UserLoginDto): Promise<Result<string>> {
+export function login(userLoginDto: UserLoginDto): Promise<Result<UserLogin>> {
   return http.post('/user/login', userLoginDto)
 }
 

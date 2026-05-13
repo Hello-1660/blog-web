@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import type { userInfo } from '@/types/user'
+import type { UserInfo } from '@/types/user'
 
 export const useUserStore = defineStore('user', () => {
   // 用户信息
-  const userInfo = ref<userInfo | null>(null)
+  const userInfo = ref<UserInfo | null>(null)
   // token 令牌
   const token = ref('')
 
@@ -23,7 +23,7 @@ export const useUserStore = defineStore('user', () => {
    * 保存用户数据
    * @param info 用户数据 
    */ 
-  const setUserInfo = (info: userInfo) => {
+  const setUserInfo = (info: UserInfo) => {
     userInfo.value = info
   }
 

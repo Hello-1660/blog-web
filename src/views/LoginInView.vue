@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { login, register, getUserInfo } from '@/apis/user'
+import { resultPostProcessor } from '@/utils/result'
 import type { UserLoginDto, UserRegisterDto, UserInfo } from '@/types/user'
 import { useUserStore } from '@/stores/user'
 import { ref } from 'vue'
+import TopTip from '@/components/TopTip.vue'
+import { useRouter } from 'vue-router'
+import { t } from 'vue-router/dist/index-D_VEAp3P.js'
 
 // 用户信息存储
 const userStore = useUserStore()
@@ -30,16 +34,33 @@ const registerRef = ref<null | HTMLDivElement>(null)
 type boxType = 'login' | 'register'
 const currentBox = ref<boxType>('login')
 
+// 提示信息
+const tipMessage = ref('')
+const tipShow = ref(false)
+
+// 路由
+const router = useRouter()
+
 /**
  * 用户登录
  */
 const loginSubmit = async () => {
   if (!(userLoginDto.value.email && userLoginDto.value.password)) return 
   const result = await login(userLoginDto.value)
+  resultPostProcessor(result, {
+    success: () => {
+      userStore.setUserInfo(result.data)
+      userStore.setToken(result.data.token)
 
-  if (result.code === 200) {
-    userStore.setUserInfo(result.data)
-  }
+      tipMessage.value = result.message
+      tipShow.value = true
+
+      router.push({ path: '/' })
+    },
+    failed: () => {
+      console.error(result.message)
+    }
+  })  
 }
 
 /**
@@ -51,6 +72,10 @@ const registerSubmit = async () => {
 
   if (result.code === 200) {
     userLoginDto.value = result.data
+
+    tipMessage.value = result.message
+    tipShow.value = true
+
     switchAnimation()
   } else {
     console.error(result.message)
@@ -96,6 +121,12 @@ const switchAnimation = () => {
 </script>
 
 <template>
+  <TopTip 
+  v-model:visible="tipShow"
+  :message="tipMessage"
+  :duration="2000"
+  />
+
   <div class="login-container">
     <div class="container-box">
       <div class="login-box" ref="loginRef">
