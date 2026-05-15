@@ -9,3 +9,16 @@ input {
   border: none;
   box-sizing: border-box;
 }
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+@font-face {
+  font-family: 'LocalSerif';
+  src: url('/fonts/NotoSerifCJKsc-ExtraLight.woff2') format('woff2');
+  font-weight: 200; 
+  font-style: normal;
+  font-display: swap;
+}

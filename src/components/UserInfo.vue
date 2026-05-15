@@ -1,0 +1,102 @@
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+import { useUserStore } from '@/stores/user'
+
+// 用户信息
+const userStore = useUserStore()
+const userInfo = ref(userStore.userInfo)
+
+const computedUserInfo = computed(() => {
+  return {
+    nickname: userInfo.value?.nickname || '请先登录',
+    email: userInfo.value?.email || '',
+    description: userInfo.value?.description || '',
+    createTime: userInfo.value?.createTime || '',
+    likeShowStatus: userInfo.value?.likeShowStatus || 0
+  }
+})
+</script>
+
+<template>
+  <div class="user-container">
+    <div class="user-head-box">
+      <div class="user-icon">
+
+      </div>
+
+      <div class="user-account">
+        <div class="user-name">{{ computedUserInfo.nickname }}</div>
+        <div class="user-email">{{ computedUserInfo.email }}</div>
+      </div>
+    </div>
+
+    <div class="user-select">
+      <router-link to="/home/composition">作品</router-link>
+      <router-link to="/home/favorite">收藏</router-link>
+      <router-link to="/home/like">喜欢</router-link>
+    </div>
+
+    <div class="user-select-view">
+      <router-view></router-view>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.user-container {
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+} 
+
+.user-head-box {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  width: 100%;
+  height: 280px;
+}
+
+.user-icon { 
+  width: 200px;
+  height: 200px;
+  border-radius: 50%; 
+  background-color: pink;
+  margin: 20px 100px 20px 20px;
+}
+
+.user-name {
+  font-size: 80px;
+  font-weight: 400;
+  color: #333;
+  font-family: 'LocalSerif' !important;
+  font-weight: 200; 
+  margin-bottom: 10px;
+  user-select: none;
+}
+
+.user-email {
+  font-size: 20px;
+  font-weight: 400;
+  color: #333;
+  font-family: 'LocalSerif' !important;
+  font-weight: 200;
+  user-select: none;
+}
+
+.user-select {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 30px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 10px;
+}
+
+.user-select > a {
+  font-size: 15px;
+  margin: 0 200px;
+  font-weight: 200;
+}
+</style>
