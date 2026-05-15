@@ -3,7 +3,7 @@
  * @param date 日期  1999-01-01T08:00:00:00
  * @return 格式化后的日期 1999-01-01 08:00
  */
-export function formatDate(date: string): string {
+export function formatDateTime(date: string): string {
   try {
     const dateArr = date.split('T')
     const year = dateArr[0]
@@ -14,5 +14,21 @@ export function formatDate(date: string): string {
     return year + ' ' + time
   } catch (error) {
     return '1999-01-01 08:00'
+  }
+}
+
+/**
+ * 日期转换
+ * @param date 日期  1999-01-01T08:00:00:00
+ * @return 格式化后的日期 1999-01-01
+ */
+export function formatDate(date: string): string {
+  try {
+    const dateArr = date.split('T')
+    const year = dateArr[0]
+
+    return year!
+  } catch (error) {
+    return '1999-01-01'
   }
 }

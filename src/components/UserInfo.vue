@@ -92,11 +92,18 @@ const computedUserInfo = computed(() => {
   height: 30px;
   border-bottom: 1px solid #eee;
   margin-bottom: 10px;
+  user-select: none;  
 }
 
 .user-select > a {
   font-size: 15px;
   margin: 0 200px;
   font-weight: 200;
+  color: #aeaeae;
+}
+
+.user-select a.router-link-active {
+  color: #000;
+  font-size: 700;
 }
 </style>

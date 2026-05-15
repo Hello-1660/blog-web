@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import type { Article } from '@/types/article'
 import { getArticleList } from '@/apis/user'
-import { formatDate } from '@/utils/date'
+import { formatDateTime } from '@/utils/date'
 
 // 用户作品列表
 const articleList = ref<Article[]>([])
@@ -23,7 +23,7 @@ onMounted(async () => {
       </div>
     
       <div class="article-footer">
-        <div class="article-time"> {{ formatDate(article.createTime) }} </div>
+        <div class="article-time"> {{ formatDateTime(article.createTime) }} </div>
       </div>
     </div>
   </div>
