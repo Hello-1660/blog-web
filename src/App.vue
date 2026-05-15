@@ -27,6 +27,5 @@ import Common from './components/Common.vue'
   --info: 200px;
   width: calc(100% - var(--info));
   height: 100%;
-  background-color: yellow;
 }
 </style>

@@ -1,6 +1,9 @@
 import type { UserInfo, UserLogin, UserLoginDto, UserRegisterDto } from '@/types/user'
+import type { Article } from '@/types/article'
 import type { Result } from '@/types/api'
 import http from '@/utils/http'
+
+const BASE_URL = '/user'
 
 /**
  * 用户登录
@@ -8,7 +11,7 @@ import http from '@/utils/http'
  * @returns 用户信息 + token
  */
 export function login(userLoginDto: UserLoginDto): Promise<Result<UserLogin>> {
-  return http.post('/user/login', userLoginDto)
+  return http.post(`${BASE_URL}/login`, userLoginDto)
 }
 
 
@@ -17,7 +20,7 @@ export function login(userLoginDto: UserLoginDto): Promise<Result<UserLogin>> {
  * @returns 用户信息
  */
 export function getUserInfo(): Promise<Result<UserInfo>> {
-  return http.get('/user/detail')
+  return http.get(`${BASE_URL}/detail`)
 }
 
 /**
@@ -26,5 +29,13 @@ export function getUserInfo(): Promise<Result<UserInfo>> {
  * @returns 用户登录信息
  */
 export function register(userRegisterDto: UserRegisterDto): Promise<Result<UserLoginDto>> {
-  return http.post('/user/save', userRegisterDto)
+  return http.post(`${BASE_URL}/save`, userRegisterDto)
+}
+
+/**
+ * 获取用户文章列表
+ * @returns 文章列表
+ */
+export function getArticleList(): Promise<Result<Article[]>> {
+  return http.get(`${BASE_URL}/articleList`)
 }

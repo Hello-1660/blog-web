@@ -12,6 +12,5 @@ import UserInfo from '@/components/UserInfo.vue'
 .home-container {
   width: 100%;
   height: 100%;
-  background-color: lightblue;
 }
 </style>
