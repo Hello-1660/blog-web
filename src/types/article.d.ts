@@ -23,3 +23,19 @@ export type Article = {
     // 文章分类编号
     categoryId: number;
 }
+
+/**
+ * 用户点赞文章
+ */
+export type UserLikeArticle = {
+    // 用户编号
+    userId: number;
+    // 文章编号
+    articleId: number;
+    // 点赞日期
+    likeTime: string;
+    // 文章封面
+    icon: string;
+    // 文章标题
+    title: string;
+}

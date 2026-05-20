@@ -1,5 +1,5 @@
 import type { UserInfo, UserLogin, UserLoginDto, UserRegisterDto } from '@/types/user'
-import type { Article } from '@/types/article'
+import type { Article, UserLikeArticle } from '@/types/article'
 import type { Result } from '@/types/api'
 import http from '@/utils/http'
 
@@ -38,4 +38,12 @@ export function register(userRegisterDto: UserRegisterDto): Promise<Result<UserL
  */
 export function getArticleList(): Promise<Result<Article[]>> {
   return http.get(`${BASE_URL}/articleList`)
+}
+
+/**
+ * 获取用户喜欢列表
+ * @returns  用户喜欢列表
+ */
+export function getUserLikeArticleList(): Promise<Result<UserLikeArticle[]>> {
+  return http.get(`${BASE_URL}/likeList`)
 }

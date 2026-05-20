@@ -14,11 +14,16 @@ const router = useRouter()
 const handleToHome = () => {
   router.push('/home')
 }
+
+// 跳转到首页
+const handleToIndex = () => {
+  router.push('/')
+}
 </script>
 
 <template>
   <div class="common-container">
-    <div class="logo">blog</div>
+    <div class="logo" @click="handleToIndex">blog</div>
     <div class="user-info">
       <div @click="handleToHome" class="user-icon">
         {{ user?.icon }}

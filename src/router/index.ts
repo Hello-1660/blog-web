@@ -11,34 +11,36 @@ const routes = [
     path: '/',
     name: 'index',
     component: Index,
+    children: [
+      {
+        path: '/home',
+        redirect: '/home/composition',
+        name: 'home',
+        component: () => import('@/views/Home.vue'),
+        children: [
+          {
+            path: 'favorite',
+            name: 'favorite',
+            component: UserFavorite,
+          },
+          {
+            path: 'like',
+            name: 'like',
+            component: UserLike,
+          },
+          {
+            path: 'composition',
+            name: 'composition',
+            component: UserComposition,
+          },
+        ],
+      },
+    ]
   },
   {
     path: '/login',
     name: 'login',
     component: LoginIn,
-  },
-  {
-    path: '/home',
-    redirect: '/home/composition',
-    name: 'home',
-    component: () => import('@/views/Home.vue'),
-    children: [
-      {
-        path: 'favorite',
-        name: 'favorite',
-        component: UserFavorite,
-      },
-      {
-        path: 'like',
-        name: 'like',
-        component: UserLike,
-      },
-      {
-        path: 'composition',
-        name: 'composition',
-        component: UserComposition,
-      },
-    ],
   },
 ]
 
