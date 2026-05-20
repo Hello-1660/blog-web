@@ -5,10 +5,12 @@ import LoginIn from '@/views/LoginInView.vue'
 import UserFavorite from '@/components/UserFavorite.vue'
 import UserLike from '@/components/UserLike.vue'
 import UserComposition from '@/components/UserComposition.vue'
+import HotArticle from '@/views/HotArticle.vue'
 
 const routes = [
   {
     path: '/',
+    redirect: '/hot',
     name: 'index',
     component: Index,
     children: [
@@ -34,6 +36,11 @@ const routes = [
             component: UserComposition,
           },
         ],
+      },
+      {
+        path: '/hot',
+        name: 'hot',
+        component: HotArticle,
       },
     ]
   },
