@@ -7,6 +7,7 @@ import { formatDate } from '@/utils/date'
 // 用户喜欢列表
 const articleList = ref<UserLikeArticle[]>([])
 
+
 onMounted(async () => {
   const date = await getUserLikeArticleList()
   articleList.value = date.data
@@ -28,7 +29,7 @@ onMounted(async () => {
   </div>
 </template>
 
-<style lang="css" scoped>
+<style scoped>
 .like-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));

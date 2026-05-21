@@ -39,3 +39,61 @@ export type UserLikeArticle = {
     // 文章标题
     title: string;
 }
+
+/**
+ * 文章搜索
+ */
+export type ArticleSearchDto = {
+    // 作者名称
+    userNickname: string;
+    // 文章标题
+    title: string;
+    // 分类编号
+    categoryId: number;
+    // 创建日期
+    createTime: string;
+    // 查询页数
+    pageNum: number;
+    // 每页文章数量
+    pageSize: number;
+}
+
+/**
+ * 文章搜索结果
+ */
+export type ArticleSearchVo = {
+    // 文章编号
+    id: number;
+    // 文章作者编号
+    userId: number;
+    // 文章封面
+    icon: string;
+    // 文章标题
+    title: string;
+    // 文章创建日期
+    createTime: string;
+    // 作者昵称
+    userNickName: string;
+}
+
+/**
+ * 推荐文章
+ */
+export type HotArticleVo = {
+    // 推荐文章编号
+    id: number;
+    // 文章作者编号
+    userId: number;
+    // 文章作者昵称
+    userNickname: string;
+    // 文章封面
+    icon: string;
+    // 文章标题
+    title: string;
+    // 文章创建日期
+    createTime: string;
+    // 文章热度
+    value: number;
+    // 分类编号
+    categoryId: number;
+}
