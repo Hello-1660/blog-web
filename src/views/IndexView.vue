@@ -22,6 +22,8 @@ import Common from '@/components/Common.vue'
 }
 
 .content {
+  display: flex;
+  justify-content: center;
   --info: 200px;
   width: calc(100% - var(--info));
   height: 100%;

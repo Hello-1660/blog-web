@@ -3,9 +3,20 @@ import { ref, onMounted } from 'vue'
 import type { Article } from '@/types/article'
 import { getArticleList } from '@/apis/user'
 import { formatDateTime } from '@/utils/date'
+import { useRouter } from 'vue-router'
 
+// 路由
+const router = useRouter()
 // 用户作品列表
 const articleList = ref<Article[]>([])
+
+/**
+ * 查看文章
+ * @param id 文章编号
+ */
+const handleLookArticle = (id: number) => {
+  router.push(`/article/${id}`)
+}
 
 onMounted(async () => {
   const date = await getArticleList()
@@ -15,7 +26,11 @@ onMounted(async () => {
 
 <template>
   <div class="composition-container">
-    <div class="article-item" v-for="article in articleList" :key="article.id">
+    <div class="article-item" 
+    v-for="article in articleList" 
+    :key="article.id"
+    @click="handleLookArticle(article.id)"
+    >
       <div class="article-icon"></div>
       <div class="article-show">
         <div class="article-body">
@@ -49,11 +64,12 @@ onMounted(async () => {
   width: 250px;
   height: 300px;
   border-radius: 4px;
+  background-color: var(--box-bgc);
   user-select: none;
 }
 
 .article-item:hover {
-  background-color: #f5f5f5;
+  background-color: var(--box-hover-bgc);
 }
 
 .article-icon {

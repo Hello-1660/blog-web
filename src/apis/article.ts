@@ -1,4 +1,4 @@
-import type { Article, ArticleSearchDto, ArticleSearchVo, HotArticleVo } from '@/types/article'
+import type { ArticleVo, ArticleSearchDto, ArticleSearchVo, HotArticleVo } from '@/types/article'
 import type { Result } from '@/types/api'
 import http from '@/utils/http'
 
@@ -10,4 +10,13 @@ const BASE_URL = '/article'
  */
 export function getHotDetail() :Promise<Result<HotArticleVo[]>> {
   return http.get(`${BASE_URL}/detail`)
+}
+
+/**
+ * 查看文章
+ * @param id 文章编号  
+ * @returns 文章
+ */
+export function getArticleById(id: number): Promise<Result<ArticleVo>> {
+  return http.get(`${BASE_URL}/browse/${id}`)
 }

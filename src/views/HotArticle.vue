@@ -4,7 +4,10 @@ import { getCategoryList } from '@/apis/category'
 import type { Category } from '@/types/category'
 import type { HotArticleVo } from '@/types/article'
 import { getHotDetail } from '@/apis/article'
+import { useRouter } from 'vue-router'
 
+// 路由
+const router = useRouter()
 // 分类列表
 const categoryList = ref<Category[]>([])
 // 当前分类
@@ -19,6 +22,11 @@ const currentHotArticleList = computed(() => {
 // 切换分类
 const handleChangeCategory = (id: number) => {
   activeCategory.value = id
+}
+
+// 查看文章
+const handleLookArticle = (id: number) => {
+  router.push(`/article/${id}`)
 }
 
 onMounted(async () => {
@@ -42,7 +50,11 @@ onMounted(async () => {
     </div>
 
     <div class="hot-article-box">
-      <div class="hot-article-item" v-for="item in currentHotArticleList" :key="item.id">
+      <div class="hot-article-item" 
+      v-for="item in currentHotArticleList" 
+      :key="item.id" 
+      @click="handleLookArticle(item.id)"
+      >
         <div class="hot-article-icon"></div>
         <div class="hot-article-body">
           <div class="hot-article-title">{{ item.title }}</div>
@@ -118,12 +130,12 @@ onMounted(async () => {
   font-weight: 200;
   border-radius: 4px;
   overflow: hidden;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: var(--box-bgc);
 }
 
 
 .hot-article-item:hover {
-  background-color: #f5f5f5;
+  background-color: var(--box-hover-bgc);
 }
 
 .hot-article-title {

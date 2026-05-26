@@ -6,6 +6,7 @@ import UserFavorite from '@/components/UserFavorite.vue'
 import UserLike from '@/components/UserLike.vue'
 import UserComposition from '@/components/UserComposition.vue'
 import HotArticle from '@/views/HotArticle.vue'
+import ArticleView from '@/components/ArticleView.vue'
 
 const routes = [
   {
@@ -41,6 +42,11 @@ const routes = [
         path: '/hot',
         name: 'hot',
         component: HotArticle,
+      },
+      {
+        path: '/article/:id',
+        name: 'article',
+        component: ArticleView,
       },
     ]
   },

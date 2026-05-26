@@ -44,10 +44,11 @@ onMounted(async () => {
   border-radius: 4px;
   user-select: none;
   padding: 10px 0;
+  background-color: var(--box-bgc);
 }
 
 .like-item:hover {
-  background-color: #f5f5f5;
+  background-color: var(--box-hover-bgc);
 }
 
 .like-icon {
