@@ -18,6 +18,13 @@ const handleLookArticle = (id: number) => {
   router.push(`/article/${id}`)
 }
 
+/**
+ * 添加文章
+ */
+const handleAddArticle = () => {
+  router.push('/article/edit')
+}
+
 onMounted(async () => {
   const date = await getArticleList()
   articleList.value = date.data
@@ -26,6 +33,10 @@ onMounted(async () => {
 
 <template>
   <div class="composition-container">
+    <div class="article-add" @click="handleAddArticle">
+      <svg t="1779762682734" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6633" width="200" height="200"><path d="M896 480a32 32 0 0 1 32 32v384a32 32 0 0 1-32 32H512a32 32 0 1 1 0-64h352V512a32 32 0 0 1 32-32z m-128-384a32 32 0 0 1 32 32v640a32 32 0 0 1-32 32H128a32 32 0 0 1-32-32V128a32 32 0 0 1 32-32h640z m-32 64h-576v576h576v-576z m-285.952 128a32 32 0 0 1 32 32v98.048H576a32 32 0 0 1 31.488 26.24l0.512 5.76a32 32 0 0 1-32 32H482.048V576a32 32 0 0 1-26.24 31.488l-5.76 0.512a32 32 0 0 1-32-32V482.048H320a32 32 0 0 1-31.488-26.24l-0.512-5.76a32 32 0 0 1 32-32h98.048V320a32 32 0 0 1 26.24-31.488z" p-id="6634"></path></svg>
+    </div>
+
     <div class="article-item" 
     v-for="article in articleList" 
     :key="article.id"
@@ -56,6 +67,29 @@ onMounted(async () => {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 10px; 
+}
+
+.article-add {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 250px;
+  height: 300px;
+  background-color: var(--box-bgc);
+}
+
+.article-add:hover {
+  background-color: var(--box-hover-bgc);
+}
+
+.article-add:hover>.icon {
+  fill: var(--font-hover-color)
+}
+
+.article-add>.icon {
+  width: 40px;
+  height: 40px;
+  fill: var(--font-color)
 }
 
 .article-item {

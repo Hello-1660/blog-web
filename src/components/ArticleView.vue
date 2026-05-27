@@ -45,7 +45,6 @@ onMounted(async () => {
 <style scoped>
 .article-view-container {
   width: 70%;
-  height: 100%;
   padding: 30px 20px;
   background-color: var(--box-bgc);
 }

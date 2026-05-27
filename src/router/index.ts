@@ -7,6 +7,7 @@ import UserLike from '@/components/UserLike.vue'
 import UserComposition from '@/components/UserComposition.vue'
 import HotArticle from '@/views/HotArticle.vue'
 import ArticleView from '@/components/ArticleView.vue'
+import ArticleEditor from '@/components/ArticleEditor.vue'
 
 const routes = [
   {
@@ -48,6 +49,11 @@ const routes = [
         name: 'article',
         component: ArticleView,
       },
+      {
+        path: '/article/edit',
+        name: 'articleEdit',
+        component: ArticleEditor,
+      }
     ]
   },
   {
