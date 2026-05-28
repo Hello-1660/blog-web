@@ -26,8 +26,6 @@ export type UserLogin = UserInfo & {
   token: string;
 }
 
-
-
 /**
  * 用户登录信息
  */
@@ -38,8 +36,9 @@ export type UserLoginDto = {
   password: string;
 }
 
-
-
+/**
+ * 用户注册信息
+ */
 export type UserRegisterDto = {
   // 用户昵称
   nickname: string;
@@ -49,4 +48,48 @@ export type UserRegisterDto = {
   password: string;
   // 确认密码
   confirmPassword: string;
+}
+
+/**
+ * 用户信息
+ */
+export type User = {
+  // 用户编号
+  id: number;
+  // 用户昵称
+  nickname: string;
+  // 用户头像
+  icon: string;
+  // 用户邮箱
+  email: string;
+  // 用户密码
+  password: string;
+  // 用户简介
+  description: string;
+  // 用户主题编号
+  themeId: number;
+  // 用户创建日期
+  createTime: string;
+  // 用户喜欢展示界面 0不展示 1展示
+  likeShowStatus: number;
+  // 用户账号状态 0禁用 1启用
+  accountStatus: number;
+}
+
+/**
+ * 用户修改信息
+ */
+export type UserUpdateDto = {
+  // 用户昵称
+  nickname: string;
+  // 用户头像
+  icon: string;
+  // 用户邮箱
+  email: string;
+  // 用户简介
+  description: string;
+  // 用户主题编号
+  themeId: number;
+  // 用户喜欢展示界面 0不展示 1展示
+  likeShowStatus: number;
 }

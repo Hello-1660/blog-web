@@ -8,6 +8,7 @@ import UserComposition from '@/components/UserComposition.vue'
 import HotArticle from '@/views/HotArticle.vue'
 import ArticleView from '@/components/ArticleView.vue'
 import ArticleEditor from '@/components/ArticleEditor.vue'
+import UserUpdate from '@/views/UserUpdate.vue'
 
 const routes = [
   {
@@ -53,6 +54,11 @@ const routes = [
         path: '/article/edit',
         name: 'articleEdit',
         component: ArticleEditor,
+      },
+      {
+        path: '/user/update',
+        name: 'userUpdate',
+        component: UserUpdate,
       }
     ]
   },

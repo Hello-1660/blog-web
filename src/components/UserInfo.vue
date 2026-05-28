@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useUserStore } from '@/stores/user'
+import { useRouter } from 'vue-router'
+
+// 路由
+const router = useRouter()
 
 // 用户信息
 const userStore = useUserStore()
@@ -15,14 +19,19 @@ const computedUserInfo = computed(() => {
     likeShowStatus: userInfo.value?.likeShowStatus || 0
   }
 })
+
+/**
+ * 用户修改信息
+ */
+const handleUserUpdate = () => {
+  router.push('/user/update')
+}
 </script>
 
 <template>
   <div class="user-container">
     <div class="user-head-box">
-      <div class="user-icon">
-
-      </div>
+      <div class="user-icon" @click="handleUserUpdate"></div>
 
       <div class="user-account">
         <div class="user-name">{{ computedUserInfo.nickname }}</div>
