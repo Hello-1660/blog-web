@@ -47,3 +47,5 @@ export function getArticleList(): Promise<Result<Article[]>> {
 export function getUserLikeArticleList(): Promise<Result<UserLikeArticle[]>> {
   return http.get(`${BASE_URL}/likeList`)
 }
+
+
