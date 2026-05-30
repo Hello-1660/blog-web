@@ -75,11 +75,12 @@ onMounted(async () => {
   align-items: center;
   width: 250px;
   height: 300px;
-  background-color: var(--box-bgc);
+  background-color: var(--show-bgc);
+  transition: transform 0.3s;
 }
 
 .article-add:hover {
-  background-color: var(--box-hover-bgc);
+  transform: scale(1.05);
 }
 
 .article-add:hover>.icon {
@@ -98,12 +99,13 @@ onMounted(async () => {
   width: 250px;
   height: 300px;
   border-radius: 4px;
-  background-color: var(--box-bgc);
+  background-color: var(--show-bgc);
   user-select: none;
+  transition: transform 0.3s;
 }
 
 .article-item:hover {
-  background-color: var(--box-hover-bgc);
+  transform: scale(1.05);
 }
 
 .article-icon {

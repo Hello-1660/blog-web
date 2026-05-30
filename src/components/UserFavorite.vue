@@ -44,11 +44,12 @@ onMounted(async () => {
   user-select: none;
   padding: 10px;
   border-radius: 16px;
-  background-color: var(--box-bgc);
+  background-color: var(--show-bgc);
+  transition: transform 0.3s;
 }
 
 .favorite-box:hover {
-  background-color: var(--box-hover-bgc);
+  transform: scale(1.05);
 }
 
 .favorite-name {

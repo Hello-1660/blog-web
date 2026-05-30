@@ -29,7 +29,9 @@ onMounted(async () => {
   <div class="article-view-container" v-if="article">
     <h1 class="article-view-title">{{ article.title }}</h1>
     <div class="article-view-author">
-      <div class="article-view-user-icon"></div>
+      <div class="article-view-user-icon">
+        <img :src="article.userIcon">
+      </div>
       <div class="article-view-user">
         <div class="article-view-username">{{ article.userNickname }}</div>
         <div class="article-create-time">{{ formatDate(article.createTime) }}</div>
@@ -46,7 +48,8 @@ onMounted(async () => {
 .article-view-container {
   width: 70%;
   padding: 30px 20px;
-  background-color: var(--box-bgc);
+  background-color: var(--show-bgc);
+  color: var(--font-color);
 }
 
 .article-view-title {
@@ -80,10 +83,17 @@ onMounted(async () => {
   border-radius: 50%; 
 }
 
+.article-view-user-icon>img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
 .article-view-username {
   max-width: 200px;
   font-size: 16px;
   font-weight: 400;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }

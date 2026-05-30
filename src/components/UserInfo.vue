@@ -72,7 +72,6 @@ const handleUserUpdate = () => {
   width: 200px;
   height: 200px;
   border-radius: 50%; 
-  background-color: pink;
   margin: 20px 100px 20px 20px;
 }
 

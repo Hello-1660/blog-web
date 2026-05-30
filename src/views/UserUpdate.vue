@@ -240,7 +240,7 @@ onUnmounted(() => {
 .user-update-container {
   width: 100%;
   padding: 40px 30px;
-  background-color: var(--box-bgc);
+  background-color: var(--show-bgc);
 }
 
 .user-update-container input {
@@ -250,6 +250,7 @@ onUnmounted(() => {
   font-size: 16px;
   padding: 0 5px;
   border-bottom: 1px solid #bcbcbc;
+  background-color: var(--show-bgc);
 }
 
 .user-update-icon {
@@ -275,6 +276,7 @@ onUnmounted(() => {
   border-radius: 4px;
   padding: 4px;
   font-size: 14px;
+  background-color: var(--show-bgc);
 }
 
 .user-update-current-img-label>.icon {
@@ -374,11 +376,11 @@ onUnmounted(() => {
   width: 100px !important;
   height: 20px !important;
   padding: 16px 0;
-  background: var(--box-bgc);
+  background: var(--show-bgc);
 }
 
 .user-update-theme-select-item:hover {
-  background-color: var(--box-hover-bgc);
+  background-color: var(--hover-bgc);
 }
 
 .user-update-like-show {
@@ -401,10 +403,10 @@ onUnmounted(() => {
 }
 
 .user-update-submit-button:hover {
-  background-color: var(--box-hover-bgc);
+  background-color: var(--hover-bgc);
 }
 .user-update-cancel-button:hover {
-  background-color: var(--box-hover-bgc);
+  background-color: var(--hover-bgc);
 }
 
 .user-update-cancel-button {

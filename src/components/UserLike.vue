@@ -3,10 +3,20 @@ import { ref, onMounted } from 'vue'
 import type { UserLikeArticle } from '@/types/article'
 import { getUserLikeArticleList } from '@/apis/user'
 import { formatDate } from '@/utils/date'
+import { useRouter } from 'vue-router'
 
+// 路由
+const router = useRouter()
 // 用户喜欢列表
 const articleList = ref<UserLikeArticle[]>([])
 
+/**
+ * 查看文章
+ * @param id 文章编号 
+ */
+const handleLookArticle = (id: number) => {
+  router.push(`/article/${id}`)
+}
 
 onMounted(async () => {
   const date = await getUserLikeArticleList()
@@ -16,7 +26,10 @@ onMounted(async () => {
 
 <template>
   <div class="like-container">
-    <div class="like-item" v-for="item in articleList" :key="item.articleId">
+    <div class="like-item" 
+    v-for="item in articleList" :key="item.articleId"
+    @click="handleLookArticle(item.articleId)"
+    >
       <div class="like-icon"></div>
       <div class="like-title">{{ item.title }}</div>
       <div class="like-option">
@@ -44,11 +57,12 @@ onMounted(async () => {
   border-radius: 4px;
   user-select: none;
   padding: 10px 0;
-  background-color: var(--box-bgc);
+  background-color: var(--show-bgc);
+  transition: transform 0.3s;
 }
 
 .like-item:hover {
-  background-color: var(--box-hover-bgc);
+  transform: scale(1.05)
 }
 
 .like-icon {

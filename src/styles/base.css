@@ -5,11 +5,10 @@
 }
 
 body {
-  --box-bgc: #fff;
-  --box-hover-bgc: #f8f8f8;
-  --font-color: #676767;
-  --font-hover-color: #000;
-  background-color: #f5f5f5;
+  --base-bgc: #f5f5f5;
+  --show-bgc: #ffffff;
+  --hover-bgc: #f5f5f5;
+  --font-color: #303030;
 }
 
 input {

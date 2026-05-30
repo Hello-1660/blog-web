@@ -130,12 +130,13 @@ onMounted(async () => {
   font-weight: 200;
   border-radius: 4px;
   overflow: hidden;
-  background-color: var(--box-bgc);
+  background-color: var(--show-bgc);
+  transition: transform 0.3s;
 }
 
 
 .hot-article-item:hover {
-  background-color: var(--box-hover-bgc);
+  transform: scale(1.05); 
 }
 
 .hot-article-title {
