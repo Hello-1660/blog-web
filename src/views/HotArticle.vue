@@ -96,6 +96,15 @@ onMounted(async () => {
   padding: 5px 20px;
   color: rgb(125, 125, 125);
   user-select: none;
+  background: linear-gradient(to right, #000) no-repeat;
+  background-size: 0px 1px;
+  background-position: right bottom;
+  transition: background-size 0.2s;
+}
+
+.category-item-text:hover {
+  background-position: left bottom;
+  background-size: 100% 2px;
 }
 
 .category-active {
@@ -143,6 +152,13 @@ onMounted(async () => {
   font-size: 30px;
   font-weight: 500;
   padding-left: 10px;
+}
+
+.hot-article-user {
+  max-width: 80%;
+  white-space: nowrap; 
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .hot-article-status {

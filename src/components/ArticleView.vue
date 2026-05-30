@@ -40,6 +40,9 @@ onMounted(async () => {
 
     <div class="article-view-body" v-html="article.content"></div>
     <div class="article-view-function">
+      <div class="like-button">
+        
+      </div>
     </div>
   </div>
 </template>

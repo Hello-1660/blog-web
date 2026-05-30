@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user'
-import { ref, onUnmounted, onMounted } from 'vue'
+import { ref, computed ,onUnmounted, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import SwitchButton from '@/components/SwitchButton.vue'
 import type { UserUpdateDto } from '@/types/user'
@@ -25,6 +25,16 @@ class UserUpdateDtoObj {
     this.description = ''
     this.themeId = -1
     this.likeShowStatus = -1
+  }
+}
+// 用户更新规则
+class RuleObj {
+  rule: RegExp
+  message: string
+
+  constructor(rule: RegExp, message: string) {
+    this.rule = rule
+    this.message = message
   }
 }
 
@@ -63,6 +73,12 @@ const themeList = ref<Theme[]>([
 ])
 // 是否下拉
 const isDropdown = ref(false)
+// 校验规则
+const dataValid = { 
+  nickname: new RuleObj(/^.{2,16}$/, '只能在2-10个字符之间'),
+  email: new RuleObj(/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/, '请输入正确的邮箱'),
+  description: new RuleObj(/^.{0,30}$/, '只能在30个字符以内'),
+}
 
 /**
  * 更新用户头像
@@ -112,14 +128,18 @@ const handleLikeShowStatus = (status: boolean) => {
   } else if (status === false) {
     userInfoData.value.likeShowStatus = 0
   }
-
-  console.log(userInfoData.value.likeShowStatus)
 }
 
 /**
  * 提交用户信息
  */
 const handleSubmit = async () => {
+  if (!dataValidState.value) return
+  // 数据处理
+  userInfoData.value.nickname = userInfoData.value.nickname.trim()
+  userInfoData.value.email = userInfoData.value.email.trim()
+  userInfoData.value.description = userInfoData.value.description.trim()
+
   console.log(userInfoData.value)
   const data = await userUpdate(userInfoData.value)
   resultPostProcessor(data, {
@@ -127,6 +147,27 @@ const handleSubmit = async () => {
       router.push('/login')
     }
   })
+}
+
+// 数据校验结果
+const dataValidState = computed(() => {
+  if (!dataValid.nickname.rule.test(userInfoData.value.nickname.trim())) return false 
+  if (!dataValid.email.rule.test(userInfoData.value.email.trim())) return false
+  if (!dataValid.description.rule.test(userInfoData.value.description.trim())) return false
+  return true
+})
+
+/**
+ * 输入框失去焦点校验
+ * @param rule 校验规则
+ * @param target 校验对象
+ */
+const handleBlur = (rule: RuleObj, target: string): string => {
+  if (rule.rule.test(target)) {
+    return '' 
+  } else {
+    return rule.message
+  }
 }
 
 /**
@@ -166,14 +207,15 @@ onUnmounted(() => {
           <span>编辑</span>
           <svg t="1779929372512" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5002" width="200" height="200"><path d="M872.078938 406.080645c-27.501354 0-49.756217 22.278399-49.756217 49.756218v405.142273H163.638941V202.318892H568.82931c27.501354 0 49.756217-22.278399 49.756217-49.756217s-22.25384-49.756217-49.756217-49.756218H113.882724c-27.502377 0-49.756217 22.278399-49.756218 49.756218v758.171655c0 27.477818 22.25384 49.756217 49.756218 49.756217h758.196214c27.501354 0 49.756217-22.278399 49.756218-49.756217V455.835839c0-27.476795-22.254863-49.755194-49.756218-49.755194z" p-id="5003"></path><path d="M945.158351 79.459726c-19.435655-19.435655-50.921763-19.435655-70.358441 0L457.801611 496.481562c-19.435655 19.435655-19.435655 50.921763 0 70.35844 9.718339 9.718339 22.448268 14.576997 35.17922 14.576997 12.730952 0 25.460882-4.858658 35.17922-14.576997l416.9983-417.022858c19.435655-19.435655 19.435655-50.921763 0-70.357418z" p-id="5004"></path></svg>
         </label>
-        <input id="user-update-current-img-input" type="file" accept="image/*" @change="handleIconChange" />
+        <input id="user-update-current-img-input" type="file" accept="image/*" @change="handleIconChange"/>
       </div>
 
       <div class="user-update-nickname user-update-msg">
         <div>        
           <svg t="1779930937932" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="11056" width="200" height="200"><path d="M511.43939599 608.11629132v0.18700654h-0.53944206c-98.84016651 0-188.29763789 41.01557633-253.22847788 107.30940658-64.93084003 66.50241449-105.33145241 158.46649316-105.33145248 260.11175824 0 6.28989417 0.35962804 12.54742181 0.72285242 18.75819787H100.39175531c-0.17981397-6.21077599-0.35962804-12.46830363-0.35962798-18.75819787 0-115.73549114 45.99282817-220.58504203 120.12295311-296.51690327 43.28842539-44.14434019 95.95235351-78.52477939 154.75153567-99.6385408a292.06830465 292.06830465 0 0 1-79.71874444-56.53352559v-0.10069585c-52.66752437-52.66752437-85.13114619-125.43106271-85.13114624-205.71442316 0-80.30134182 32.46362189-153.06128396 85.13114624-205.72521202v-0.10788843C347.85179974 58.71974926 420.53621998 26.13025756 500.97781667 26.13025756c80.2617827 0 153.12961329 32.58949169 205.79354139 85.257016 52.66752437 52.66033174 85.31096018 125.47062186 85.31096021 205.83310046 0 80.35888232-32.64703218 153.15478721-85.31096021 205.815119-50.49896735 50.34432728-119.21669046 82.35841412-195.33196207 85.0807983z m158.35860476-459.71610136c-43.28842539-43.19851843-102.98667767-69.91888072-168.82018408-69.91888072s-125.71157263 26.72036229-168.82018397 69.91888072v-0.05754049c-43.28842539 43.19851843-69.80020343 102.90755953-69.80020353 168.87772454 0 65.95577984 26.51177804 125.66841723 69.80020353 168.85974306a238.1636599 238.1636599 0 0 0 168.82018397 69.87212911c66.01332041 0 125.71157263-26.72036229 168.82018408-69.87212911v-0.05034786c43.10501518-43.19851843 69.80020343-102.88598184 69.80020347-168.8093952 0-65.9342022-26.69159204-125.62885822-69.80020347-168.82018405z" p-id="11057" fill="#cdcdcd"></path><path d="M557.43222418 665.48775024h274.87448876v52.3618405h-274.87448876v-52.3618405zM557.43222418 804.8759766h323.57171969v52.35105172h-323.57171969v-52.35105172zM557.43222418 944.26779929H927.17658605v52.35105174H557.43222418v-52.35105174z" p-id="11058"></path></svg>
         </div>
-        <input type="text" placeholder="昵称" v-model="userInfoData.nickname" />       
+        <input type="text" placeholder="昵称" v-model="userInfoData.nickname" />      
+        <span class="fail">{{ handleBlur(dataValid.nickname, userInfoData.nickname.trim()) }}</span> 
       </div>
       
       <div class="user-update-email user-update-msg">
@@ -181,6 +223,7 @@ onUnmounted(() => {
           <svg t="1779930284023" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6216" width="200" height="200"><path d="M874.666667 181.333333H149.333333c-40.533333 0-74.666667 34.133333-74.666666 74.666667v512c0 40.533333 34.133333 74.666667 74.666666 74.666667h725.333334c40.533333 0 74.666667-34.133333 74.666666-74.666667V256c0-40.533333-34.133333-74.666667-74.666666-74.666667z m-725.333334 64h725.333334c6.4 0 10.666667 4.266667 10.666666 10.666667v25.6L512 516.266667l-373.333333-234.666667V256c0-6.4 4.266667-10.666667 10.666666-10.666667z m725.333334 533.333334H149.333333c-6.4 0-10.666667-4.266667-10.666666-10.666667V356.266667l356.266666 224c4.266667 4.266667 10.666667 4.266667 17.066667 4.266666s12.8-2.133333 17.066667-4.266666l356.266666-224V768c0 6.4-4.266667 10.666667-10.666666 10.666667z" p-id="6217"></path></svg> 
         </div>
         <input type="text" placeholder="邮箱" v-model="userInfoData.email" />
+        <span class="fail">{{ handleBlur(dataValid.email, userInfoData.email.trim()) }}</span> 
       </div>
 
       <div class="user-update-description user-update-msg">
@@ -188,6 +231,7 @@ onUnmounted(() => {
           <svg t="1779932005151" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="17033" width="200" height="200"><path d="M829.44 71.68H194.56A122.88 122.88 0 0 0 71.68 194.56v634.88a122.88 122.88 0 0 0 122.88 122.88h634.88a122.88 122.88 0 0 0 122.88-122.88V194.56A122.88 122.88 0 0 0 829.44 71.68z m81.92 757.76a81.92 81.92 0 0 1-81.92 81.92H194.56a81.92 81.92 0 0 1-81.92-81.92V194.56a81.92 81.92 0 0 1 81.92-81.92h634.88a81.92 81.92 0 0 1 81.92 81.92z" p-id="17034"></path><path d="M276.48 348.16m-40.96 0a40.96 40.96 0 1 0 81.92 0 40.96 40.96 0 1 0-81.92 0Z" p-id="17035"></path><path d="M430.08 348.16m-40.96 0a40.96 40.96 0 1 0 81.92 0 40.96 40.96 0 1 0-81.92 0Z" p-id="17036"></path><path d="M583.68 348.16m-40.96 0a40.96 40.96 0 1 0 81.92 0 40.96 40.96 0 1 0-81.92 0Z" p-id="17037"></path><path d="M256 573.44h409.6a20.48 20.48 0 0 0 0-40.96H256a20.48 20.48 0 0 0 0 40.96zM768 706.56H256a20.48 20.48 0 0 0 0 40.96h512a20.48 20.48 0 0 0 0-40.96z" p-id="17038"></path></svg>
         </div>
         <input type="text" placeholder="介绍一下" v-model="userInfoData.description" />
+        <span class="fail">{{ handleBlur(dataValid.description, userInfoData.description.trim()) }}</span> 
       </div>
 
       <div class="user-update-theme user-update-msg">
@@ -308,6 +352,12 @@ onUnmounted(() => {
   width: 20px;
   height: 20px;
   fill: #686868;
+}
+
+.fail {
+  color: red;
+  font-size: 14px;
+  user-select: none;
 }
 
 .user-update-theme-container {

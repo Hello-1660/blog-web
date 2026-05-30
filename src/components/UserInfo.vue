@@ -81,8 +81,12 @@ const handleUserUpdate = () => {
   border-radius: 50%;
 }
 
+.user-account {
+  flex: 1;
+}
+
 .user-name {
-  font-size: 80px;
+  font-size: 70px;
   font-weight: 400;
   color: #333;
   font-family: 'LocalSerif' !important;
