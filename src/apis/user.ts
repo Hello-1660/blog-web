@@ -1,4 +1,4 @@
-import type { UserInfo, UserLogin, UserLoginDto, UserRegisterDto } from '@/types/user'
+import type { UserInfo, UserLogin, UserLoginDto, UserRegisterDto, UserUpdateDto, UserVo } from '@/types/user'
 import type { Article, UserLikeArticle } from '@/types/article'
 import type { Result } from '@/types/api'
 import http from '@/utils/http'
@@ -48,4 +48,10 @@ export function getUserLikeArticleList(): Promise<Result<UserLikeArticle[]>> {
   return http.get(`${BASE_URL}/likeList`)
 }
 
-
+/**
+ * 更新用户信息
+ * @returns 用户信息
+ */
+export function userUpdate(data: UserUpdateDto): Promise<Result<UserVo>> {
+  return http.post(`${BASE_URL}/update`, data)
+} 

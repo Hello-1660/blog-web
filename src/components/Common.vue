@@ -26,7 +26,7 @@ const handleToIndex = () => {
     <div class="logo" @click="handleToIndex">blog</div>
     <div class="user-info">
       <div @click="handleToHome" class="user-icon">
-        {{ user?.icon }}
+        <img :src="user?.icon" alt="">
       </div>
     </div>
   </div>
@@ -61,5 +61,11 @@ const handleToIndex = () => {
   background-color: lightblue;
   border-radius: 50%;
   margin-right: 20px;
+}
+
+.user-icon>img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
 }
 </style>

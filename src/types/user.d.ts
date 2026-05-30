@@ -93,3 +93,25 @@ export type UserUpdateDto = {
   // 用户喜欢展示界面 0不展示 1展示
   likeShowStatus: number;
 }
+
+/**
+ * 用户返回信息
+ */
+export type UserVo = {
+  // 用户编号
+  id: number;
+  // 用户邮箱
+  email: string;
+  // 用户昵称
+  nickname: string;
+  // 用户头像
+  icon: string;
+  // 用户简介
+  description: string;
+  // 用户主题
+  themeId: string;
+  // 用户创建时间
+  createTime: string;
+  // 用户喜欢列表展示状态
+  likeShowStatus: number;
+}

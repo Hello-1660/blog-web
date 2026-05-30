@@ -6,8 +6,10 @@ import SwitchButton from '@/components/SwitchButton.vue'
 import type { UserUpdateDto } from '@/types/user'
 import type { Theme } from '@/types/theme'
 import { img2Base64 } from '@/utils/img'
+import { userUpdate } from '@/apis/user'
+import { resultPostProcessor } from '@/utils/result'
 
-
+// 用户更新对象
 class UserUpdateDtoObj {
   nickname: string
   icon: string
@@ -25,7 +27,6 @@ class UserUpdateDtoObj {
     this.likeShowStatus = -1
   }
 }
-
 
 // 路由
 const router = useRouter()
@@ -106,24 +107,46 @@ const handleClickOutside = () => {
  * @param start 状态 
  */
 const handleLikeShowStatus = (status: boolean) => {
-  if (status === true && userInfoData.value) {
+  if (status === true) {
     userInfoData.value.likeShowStatus = 1
-  } else if (status === false && userInfoData.value) {
+  } else if (status === false) {
     userInfoData.value.likeShowStatus = 0
   }
+
+  console.log(userInfoData.value.likeShowStatus)
 }
 
 /**
  * 提交用户信息
  */
-const handleSubmit = () => {
+const handleSubmit = async () => {
   console.log(userInfoData.value)
+  const data = await userUpdate(userInfoData.value)
+  resultPostProcessor(data, {
+    success: () => {
+      router.push('/login')
+    }
+  })
+}
+
+/**
+ * 取消修改
+ */
+const handleCancel = () => {
+  router.go(-1)
 }
 
 onMounted(() => {
   // 获取用户信息
   if (!userStore.isLogin) router.push('/')
-  if (userStore.userInfo) userInfoData.value = userStore.userInfo 
+  if (userStore.userInfo) {
+    userInfoData.value.nickname = userStore.userInfo.nickname
+    userInfoData.value.icon = userStore.userInfo.icon
+    userInfoData.value.email = userStore.userInfo.email
+    userInfoData.value.description = userStore.userInfo.description
+    userInfoData.value.themeId = userStore.userInfo.themeId
+    userInfoData.value.likeShowStatus = userStore.userInfo.likeShowStatus
+  }
 
   // 添加点击外部监听
   window.addEventListener('click', handleClickOutside)
@@ -137,7 +160,6 @@ onUnmounted(() => {
 
 <template>
   <div class="user-update-container">
-    <form>
       <div class="user-update-icon">
         <img :src="userInfoData.icon" class="user-update-current-img">
         <label for="user-update-current-img-input" class="user-update-current-img-label">
@@ -208,10 +230,9 @@ onUnmounted(() => {
       </div>
 
       <div>
-        <button type="button" class="user-update-cancel-button">取消</button>
+        <button type="button" class="user-update-cancel-button" @click="handleCancel">取消</button>
         <button type="button" class="user-update-submit-button" @click="handleSubmit">提交</button>
       </div>
-    </form>
   </div>
 </template>
 
@@ -223,10 +244,12 @@ onUnmounted(() => {
 }
 
 .user-update-container input {
-  width: 40%;
+  width: 30%;
+  max-width: 500px;
   height: 30px;
   font-size: 16px;
   padding: 0 5px;
+  border-bottom: 1px solid #bcbcbc;
 }
 
 .user-update-icon {

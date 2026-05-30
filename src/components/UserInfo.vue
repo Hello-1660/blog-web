@@ -31,7 +31,9 @@ const handleUserUpdate = () => {
 <template>
   <div class="user-container">
     <div class="user-head-box">
-      <div class="user-icon" @click="handleUserUpdate"></div>
+      <div class="user-icon" @click="handleUserUpdate">
+        <img :src="userInfo?.icon" alt="">
+      </div>
 
       <div class="user-account">
         <div class="user-name">{{ computedUserInfo.nickname }}</div>
@@ -72,6 +74,12 @@ const handleUserUpdate = () => {
   border-radius: 50%; 
   background-color: pink;
   margin: 20px 100px 20px 20px;
+}
+
+.user-icon>img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
 }
 
 .user-name {
