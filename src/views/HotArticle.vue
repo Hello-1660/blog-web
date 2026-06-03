@@ -99,7 +99,7 @@ onMounted(async () => {
   background: linear-gradient(to right, #000) no-repeat;
   background-size: 0px 1px;
   background-position: right bottom;
-  transition: background-size 0.2s;
+  transition: transform 0.2s, background-size 0.1s;
 }
 
 .category-item-text:hover {
@@ -108,7 +108,7 @@ onMounted(async () => {
 }
 
 .category-active {
-  border-bottom: 1px solid #000;
+  transform: scale(1.35);
   color: #000;
 }
 

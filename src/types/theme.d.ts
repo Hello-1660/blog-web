@@ -1,4 +1,6 @@
-
+/**
+ * 主题
+ */
 export type Theme = {
   // 主题编号
   id: number;
