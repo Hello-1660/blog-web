@@ -6,7 +6,6 @@ import { useUserStore } from '@/stores/user'
 import { ref } from 'vue'
 import TopTip from '@/components/TopTip.vue'
 import { useRouter } from 'vue-router'
-import { t } from 'vue-router/dist/index-D_VEAp3P.js'
 
 // 用户信息存储
 const userStore = useUserStore()

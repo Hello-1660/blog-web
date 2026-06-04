@@ -11,6 +11,11 @@
     "type-check": "vue-tsc --build"
   },
   "dependencies": {
+    "@tiptap/extension-image": "^3.25.0",
+    "@tiptap/extension-text-style": "^3.25.0",
+    "@tiptap/pm": "^3.25.0",
+    "@tiptap/starter-kit": "^3.25.0",
+    "@tiptap/vue-3": "^3.25.0",
     "axios": "^1.16.0",
     "pinia": "^3.0.4",
     "pinia-plugin-persistedstate": "^4.7.1",
