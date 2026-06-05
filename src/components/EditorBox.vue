@@ -41,6 +41,7 @@ const editor = useEditor({
  */
 const handleFontOption = (fontOption: FontOption) => {
   if (fontOption.type === 'size') {
+    console.log('size')
     editor.value?.chain().focus().setFontSize(fontOption.value).run()
   } else if (fontOption.type === 'bold') {
     editor.value?.commands.toggleBold()
@@ -50,6 +51,10 @@ const handleFontOption = (fontOption: FontOption) => {
     editor.value?.chain().focus().setBackgroundColor(fontOption.value).run()
   }
 }
+
+defineExpose({
+  handleFontOption
+})
 </script>
 
 <template>
@@ -61,6 +66,5 @@ const handleFontOption = (fontOption: FontOption) => {
 <style scoped>
 .editor-box {
   width: 100%;
-  padding: 10px;
 }
 </style>

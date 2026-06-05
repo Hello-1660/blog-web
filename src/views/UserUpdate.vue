@@ -282,7 +282,6 @@ onUnmounted(() => {
 
 <style scoped>
 .user-update-container {
-  width: 100%;
   padding: 40px 30px;
   background-color: var(--show-bgc);
 }

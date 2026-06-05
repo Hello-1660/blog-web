@@ -1,0 +1,9 @@
+/**
+ * 下拉条目
+ */
+export type SelectItem = {
+  // 条目编号
+  id: number;
+  // 条目名称
+  name: string
+}
