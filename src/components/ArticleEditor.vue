@@ -94,12 +94,7 @@ onMounted(async () => {
 
 <template>
   <div class="article-edit-container"> 
-    <div class="article-edit-title">
-      <input class="article-edit-title-input" type="text" placeholder="请输入文章标题" v-model="article.title">
-    </div>
-
-    <div class="article-edit-content">
-      <div class="article-edit-option">
+    <div class="article-edit-option">
         <div class="article-edit-option-item">
           <svg t="1780626085595" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3028" width="200" height="200"><path d="M748.4 210.9H44c-11 0-20-9-20-20s9-20 20-20h704.4c11 0 20 9 20 20s-8.9 20-20 20z" fill="#1C1C1C" p-id="3029"></path><path d="M396.2 915.1c-11 0-20-9-20-20V196.6c0-11 9-20 20-20s20 9 20 20v698.5c0 11.1-8.9 20-20 20z" fill="#1C1C1C" p-id="3030"></path><path d="M996 498H578.8c-11 0-20-9-20-20s9-20 20-20H996c11 0 20 9 20 20s-8.9 20-20 20z" fill="#1C1C1C" p-id="3031"></path><path d="M787.4 915.1c-11 0-20-9-20-20V481.4c0-11 9-20 20-20s20 9 20 20v413.8c0 11-8.9 19.9-20 19.9z" fill="#1C1C1C" p-id="3032"></path></svg>
           <SelectList
@@ -115,6 +110,12 @@ onMounted(async () => {
           ></SelectList>
         </div>
       </div>
+
+    <div class="article-edit-title">
+      <input class="article-edit-title-input" type="text" placeholder="请输入文章标题" v-model="article.title">
+    </div>
+
+    <div class="article-edit-content">
       <EditorBox ref="editorBox"></EditorBox>
     </div>
   </div>
@@ -122,9 +123,11 @@ onMounted(async () => {
 
 <style scoped>
 .article-edit-container {
-  width: 70%;
+  width: 100%;
   background-color: var(--show-bgc);
   padding: 50px;
+  min-height: calc(100% - 60px);
+  margin-top: 60px;
 }
 
 .article-edit-title {
@@ -146,11 +149,18 @@ onMounted(async () => {
 
 .article-edit-content {
   background-color: yellow;
+  overflow-y: hidden;
 }
 
 .article-edit-option {
+  position: fixed;
+  top: 50px;
+  left: 0px;
   display: flex;
   gap: 0 20px;
+  width: 100%;
+  padding: 0 250px;
+  background-color: var(--show-bgc);
 }
 
 .article-edit-option-item {

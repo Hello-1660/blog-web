@@ -106,8 +106,6 @@ const handleUserUpdate = () => {
 
 .user-select {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
   width: 100%;
   height: 30px;
   border-bottom: 1px solid #eee;
@@ -115,9 +113,10 @@ const handleUserUpdate = () => {
   user-select: none;  
 }
 
-.user-select > a {
+.user-select>a {
+  flex: 1;
   font-size: 15px;
-  margin: 0 200px;
+  text-align: center;
   font-weight: 200;
   color: #aeaeae;
 }

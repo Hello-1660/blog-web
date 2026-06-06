@@ -4,7 +4,11 @@
   box-sizing: border-box;
 }
 
-body {
+html {
+  background-color: var(--base-bgc);
+}
+
+:root {
   --base-bgc: #f5f5f5;
   --show-bgc: #ffffff;
   --hover-bgc: #f5f5f5;

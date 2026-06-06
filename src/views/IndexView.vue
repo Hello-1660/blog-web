@@ -4,9 +4,11 @@ import Common from '@/components/Common.vue'
 
 <template> 
   <div class="index-container">
-    <Common />
+    <Common/>
     <div class="content"> 
-      <router-view />
+      <div>
+        <router-view />
+      </div>
     </div>
   </div>
 </template>
@@ -24,8 +26,13 @@ import Common from '@/components/Common.vue'
 .content {
   display: flex;
   justify-content: center;
-  --info: 200px;
-  width: calc(100% - var(--info));
+  width: 100%;
   height: 100%;
+  padding: 0 200px;
+  overflow-y: auto;
+}
+
+.content>div {
+  width: 100%;
 }
 </style>
