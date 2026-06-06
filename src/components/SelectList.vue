@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import type { SelectItem } from '@/types/common'
 
 const prop = defineProps<{
@@ -16,6 +16,11 @@ const isDropdown = ref(false)
 const emit = defineEmits(['selectId'])
 // 根容器
 const selectContainer = ref<HTMLDivElement | null>(null)
+
+// 最长条目，用于撑开父容器宽度
+const longestItem = computed(() =>
+  list.value.reduce((a, b) => a.name.length >= b.name.length ? a : b)
+)
 
 /**
  * 点击展开下拉列表
@@ -59,6 +64,8 @@ onUnmounted(() => {
     @click="handleSelectListActive"
     >{{ current }}</div>
 
+    <div class="select-container-sizer select-container-item" aria-hidden="true">{{ longestItem.name }}</div>
+
     <div class="select-container-list"
     :class="{ 'select-container-list-active' : isDropdown }"
     >
@@ -79,24 +86,33 @@ onUnmounted(() => {
   color: var(--font-color);
   user-select: none;
   position: relative;
-  width: 100px;
+  display: inline-block;
 }
 
 .select-container-show {
-  background-color: transparent !important;
-  border-bottom: 1px solid #000;
+  background-color: var(--show-bgc);
+  border-radius: 4px;
   margin-bottom: 5px;
+  border: 1px solid rgba(79, 79, 79, 0.505);
+}
+
+.select-container-sizer {
+  height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  visibility: hidden;
+  overflow: hidden;
 }
 
 .select-container-list {
-  position: absolute; 
+  position: absolute;
+  width: 100%;
   z-index: 10;
   display: grid;
   grid-template-rows: 0fr;
   transition: grid-template-rows 0.2s ease;
   border-radius: 10px;
   box-shadow: 5px 5px 10px rgba(0,0,0,0.2);
-  width: 100%;
   overflow: hidden;
 }
 
