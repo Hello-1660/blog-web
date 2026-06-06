@@ -9,7 +9,7 @@ const prop = defineProps<{
 // 条目列表
 const list = ref(prop.selectList)
 // 选择条目
-const current = ref(list.value[0]?.name)
+const current = ref(list.value[0]?.label)
 // 是否下拉
 const isDropdown = ref(false)
 // 传递给父组件的信息
@@ -19,7 +19,7 @@ const selectContainer = ref<HTMLDivElement | null>(null)
 
 // 最长条目，用于撑开父容器宽度
 const longestItem = computed(() =>
-  list.value.reduce((a, b) => a.name.length >= b.name.length ? a : b)
+  list.value.reduce((a, b) => a.label.length >= b.label.length ? a : b)
 )
 
 /**
@@ -36,7 +36,7 @@ const handleSelectListActive = (e: MouseEvent) => {
 const handleClick = (id: number, e: Event) => {
   e.stopPropagation()
   isDropdown.value = false
-  current.value = list.value.filter(item => item.id === id)[0]?.name
+  current.value = list.value.filter(item => item.id === id)[0]?.label
   emit('selectId', id)
 }
 
@@ -64,7 +64,7 @@ onUnmounted(() => {
     @click="handleSelectListActive"
     >{{ current }}</div>
 
-    <div class="select-container-sizer select-container-item" aria-hidden="true">{{ longestItem.name }}</div>
+    <div class="select-container-sizer select-container-item" aria-hidden="true">{{ longestItem.label }}</div>
 
     <div class="select-container-list"
     :class="{ 'select-container-list-active' : isDropdown }"
@@ -74,7 +74,7 @@ onUnmounted(() => {
         v-for="item in list" :key="item.id"
         @click="handleClick(item.id, $event)"
         >
-        {{ item.name }}
+        {{ item.label }}
         </div>
       </div>
     </div>
