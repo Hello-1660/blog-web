@@ -65,6 +65,8 @@ const handleFontOption = (fontOption: FontOption) => {
   } else if (fontOption.type === 'family') {
     console.log(fontOption.value, 1111)
     editor.value?.chain().focus().setFontFamily(fontOption.value).run()
+  } else if (fontOption.type === 'underline') {
+    editor.value?.commands.toggleUnderline()
   }
 }
 

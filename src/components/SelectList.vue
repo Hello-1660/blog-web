@@ -120,6 +120,10 @@ onUnmounted(() => {
   overflow: hidden;
 }
 
+.select-container-list>div>div {
+  padding: 5px 0;
+}
+
 .select-container-list-active {
   grid-template-rows: 1fr;
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { getArticleById } from '@/apis/article'
 import type { Article } from '@/types/article'
@@ -7,6 +7,9 @@ import EditorBox from './EditorBox.vue'
 import SelectList from './SelectList.vue'
 import type { SelectItem } from '@/types/common.js'
 import type { FontOptionType } from '@/types/editor'
+import Pickr from '@simonwep/pickr'
+import '@simonwep/pickr/dist/themes/classic.min.css'
+
 
 // 文章对象
 class ArticleObj { 
@@ -55,6 +58,10 @@ const fontSizeSelectList = [
   { id: 3, value: '16px', label: '16px' },
   { id: 4, value: '18pz', label: '18px' },
   { id: 5, value: '20px', label: '20px' },
+  { id: 6, value: '22px', label: '22px' },
+  { id: 7, value: '24px', label: '24px' },
+  { id: 8, value: '26px', label: '26px' },
+  { id: 9, value: '28px', label: '28px' }
 ]
 
 const fontFamilySelectList = [
@@ -84,12 +91,72 @@ const fontFamilySelectList = [
 // 用于是否禁用操作列表
 const isWritingContent = ref(false)
 
+
+// Simple example, see optional options for more configuration.
+let pickr: null | Pickr = null
+let bgcPickr: null | Pickr = null
+const colorPicker = ref<HTMLDivElement | null>(null)
+const bgcColorPicker = ref<HTMLDivElement | null>(null)
+
+// 创建取色框
+const createPickr = (el: HTMLElement): Pickr => { 
+  return Pickr.create({
+      el: el,
+      theme: 'classic', // or 'monolith', or 'nano'
+
+      swatches: [
+        'rgba(244, 67, 54, 1)',
+        'rgba(233, 30, 99, 0.95)',
+        'rgba(156, 39, 176, 0.9)',
+        'rgba(103, 58, 183, 0.85)',
+        'rgba(63, 81, 181, 0.8)',
+        'rgba(33, 150, 243, 0.75)',
+        'rgba(3, 169, 244, 0.7)',
+        'rgba(0, 188, 212, 0.7)',
+        'rgba(0, 150, 136, 0.75)',
+        'rgba(76, 175, 80, 0.8)',
+        'rgba(139, 195, 74, 0.85)',
+        'rgba(205, 220, 57, 0.9)',
+        'rgba(255, 235, 59, 0.95)',
+        'rgba(255, 193, 7, 1)'
+      ],
+
+      components: {
+        preview: true,
+        opacity: true,
+        hue: true,
+
+        interaction: {
+          hex: true,
+          rgba: true,
+          hsva: true,
+          cmyk: true,
+          input: true,
+          clear: true,
+          save: true,
+        }
+      },
+
+      i18n: {
+        'ui:dialog': '颜色选择器',
+        'btn:toggle': '切换',
+        'btn:swatch': '取色',
+        'btn:last-color': '使用上次颜色',
+        'btn:save': '保存',
+        'btn:cancel': '取消',
+        'btn:clear': '清除'
+      }
+    })
+}
+
+
 /**
  * 监听选择字体大小
  * @param id 字体大小条目编号
  */
 const handleSelectFontSizeId = (id: number) => {
-  fontStyleUpdate(id, 'size', fontSizeSelectList)
+  const value = fontSizeSelectList.filter(item => item.id === id)[0]?.value
+  if (value) fontStyleUpdate('size', value)
 }
 
 /**
@@ -97,17 +164,30 @@ const handleSelectFontSizeId = (id: number) => {
  * @param id 字体样式编号
  */
 const handleSelectFontFamilyId = (id: number) => {
-  fontStyleUpdate(id, 'family', fontFamilySelectList)
+  const value = fontFamilySelectList.filter(item => item.id === id)[0]?.value
+  if (value) fontStyleUpdate('family', value)
+}
+
+/**
+ * 监听加粗按钮点击
+ */
+const handleFontBold = () => {
+  fontStyleUpdate('bold', 'bold')
+}
+
+/**
+ * 监听下划线按钮点击
+ */
+const handleFontUnderline = () => {
+  fontStyleUpdate('underline', 'underline')
 }
 
 /**
  * 改变字体样式
- * @param id 列表元素索引
  * @param type 样式类型
- * @param list 样式列表
+ * @param value 样式
  */
-const fontStyleUpdate = (id: number, type: FontOptionType, list: Array<SelectItem>) => {
-  const value = list.filter(item => item.id === id)[0]?.value
+const fontStyleUpdate = (type: FontOptionType, value: string) => {
   if (!value) return
   editorBox.value?.handleFontOption({
     type: type,
@@ -134,6 +214,41 @@ onMounted(async () => {
 
   // 标题输入框自动聚焦
   articleEditTitleInput.value?.focus()
+
+  // 初始化取色框
+  if (colorPicker.value) {
+    pickr = createPickr(colorPicker.value)
+  }
+
+  if (bgcColorPicker.value) {
+    bgcPickr = createPickr(bgcColorPicker.value)
+  }
+
+  if (pickr) {
+    pickr.on('save', (color: any) => {
+      const colorString = color.toHEXA().toString()
+      fontStyleUpdate('color', colorString)
+    })
+  }
+
+  if (bgcPickr) {
+    bgcPickr.on('save', (color: any) => {
+      const colorString = color.toHEXA().toString()
+      fontStyleUpdate('bgc', colorString)
+    })
+  }
+})
+
+onUnmounted(() => {
+  if (pickr) {
+    pickr.destroyAndRemove();
+    pickr = null;
+  }
+
+  if (bgcPickr) {
+    bgcPickr.destroyAndRemove();
+    bgcPickr = null;
+  }
 })
 </script>
 
@@ -141,7 +256,7 @@ onMounted(async () => {
   <div class="article-edit-container"> 
     <div class="article-edit-option" :class="{ 'article-edit-option-disable' : !isWritingContent }">
         <div class="article-edit-option-item">
-          <svg t="1780626085595" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3028" width="200" height="200"><path d="M748.4 210.9H44c-11 0-20-9-20-20s9-20 20-20h704.4c11 0 20 9 20 20s-8.9 20-20 20z" fill="#1C1C1C" p-id="3029"></path><path d="M396.2 915.1c-11 0-20-9-20-20V196.6c0-11 9-20 20-20s20 9 20 20v698.5c0 11.1-8.9 20-20 20z" fill="#1C1C1C" p-id="3030"></path><path d="M996 498H578.8c-11 0-20-9-20-20s9-20 20-20H996c11 0 20 9 20 20s-8.9 20-20 20z" fill="#1C1C1C" p-id="3031"></path><path d="M787.4 915.1c-11 0-20-9-20-20V481.4c0-11 9-20 20-20s20 9 20 20v413.8c0 11-8.9 19.9-20 19.9z" fill="#1C1C1C" p-id="3032"></path></svg>
+          <svg t="1780626085595" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3028" width="200" height="200"><path d="M748.4 210.9H44c-11 0-20-9-20-20s9-20 20-20h704.4c11 0 20 9 20 20s-8.9 20-20 20z" p-id="3029"></path><path d="M396.2 915.1c-11 0-20-9-20-20V196.6c0-11 9-20 20-20s20 9 20 20v698.5c0 11.1-8.9 20-20 20z" p-id="3030"></path><path d="M996 498H578.8c-11 0-20-9-20-20s9-20 20-20H996c11 0 20 9 20 20s-8.9 20-20 20z" p-id="3031"></path><path d="M787.4 915.1c-11 0-20-9-20-20V481.4c0-11 9-20 20-20s20 9 20 20v413.8c0 11-8.9 19.9-20 19.9z" p-id="3032"></path></svg>
           <SelectList
           :select-list="fontSizeSelectList"
           @select-id="handleSelectFontSizeId"
@@ -154,6 +269,28 @@ onMounted(async () => {
           :select-list="fontFamilySelectList"
           @select-id="handleSelectFontFamilyId"
           ></SelectList>
+        </div>
+
+        <div  class="article-edit-option-item">
+          <svg t="1780804392520" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="14462" width="200" height="200"><path d="M475.2 903.2c-16.8 0-34.4-1.6-53.6-4l-4.8-0.8c-136-20.8-228.8-152.8-232.8-158.4-131.2-200-65.6-402.4 58.4-514.4 123.2-112 328.8-160 508.8-15.2C867.2 304 902.4 433.6 904 439.2v1.6c16.8 91.2 3.2 158.4-40.8 201.6-67.2 64.8-178.4 44-193.6 40.8-20.8-2.4-36 4-47.2 17.6-12 15.2-14.4 35.2-10.4 47.2 11.2 33.6 12.8 59.2 4.8 78.4-23.2 50.4-70.4 76.8-141.6 76.8z m-51.2-52.8l4.8 0.8c77.6 12 124.8-3.2 144-46.4 0-0.8 4-11.2-6.4-43.2-10.4-28.8-2.4-66.4 18.4-92 21.6-27.2 53.6-39.2 91.2-35.2l2.4 0.8c0.8 0 100 21.6 151.2-28 31.2-30.4 40.8-83.2 27.2-156.8-3.2-10.4-37.6-123.2-136.8-202.4-156.8-128-336.8-85.6-445.6 12.8C174.4 352 100.8 525.6 224 713.6c0.8 0 84.8 120 200 136.8z" p-id="14463"></path><path d="M284 526.4m-48 0a48 48 0 1 0 96 0 48 48 0 1 0-96 0Z" p-id="14464"></path><path d="M340 382.4m-48 0a48 48 0 1 0 96 0 48 48 0 1 0-96 0Z" p-id="14465"></path><path d="M484 302.4m-48 0a48 48 0 1 0 96 0 48 48 0 1 0-96 0Z" p-id="14466"></path><path d="M644 342.4m-48 0a48 48 0 1 0 96 0 48 48 0 1 0-96 0Z" p-id="14467"></path><path d="M724 470.4m-48 0a48 48 0 1 0 96 0 48 48 0 1 0-96 0Z" p-id="14468"></path></svg>
+          <div class="entry">
+            <div class="color-picker" ref="colorPicker"></div>
+          </div>
+        </div>
+
+        <div class="article-edit-option-item">
+          <svg t="1780808542098" class="icon" viewBox="0 0 1228 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="18339" width="200" height="200"><path d="M36.522667 39.7312H1194.666667v954.641067H36.522667V39.7312z m333.960533 340.7872a203.093333 203.093333 0 0 0-144.7936 60.0064 203.9808 203.9808 0 0 0-60.0064 144.7936 203.093333 203.093333 0 0 0 60.0064 144.7936 203.9808 203.9808 0 0 0 144.7936 60.074667c21.367467 0 42.120533-3.2768 62.395733-9.693867 15.701333-5.051733 30.788267-11.946667 45.192534-20.753067v27.579734h97.211733V381.3376H478.071467v29.559467a209.7152 209.7152 0 0 0-45.192534-20.753067 206.0288 206.0288 0 0 0-62.395733-9.557333zM446.464 509.3376c21.0944 21.026133 31.607467 46.421333 31.607467 75.9808 0 29.627733-10.513067 54.954667-31.607467 75.9808-21.026133 20.821333-46.421333 31.197867-75.9808 31.197867-29.627733 0-54.954667-10.376533-75.9808-31.197867a104.311467 104.311467 0 0 1-31.197867-75.9808c0-29.627733 10.376533-54.954667 31.197867-75.9808 21.026133-21.0944 46.421333-31.607467 75.9808-31.607467 29.627733 0 54.954667 10.513067 75.9808 31.607467z m331.229867-81.237333c-14.404267 4.573867-27.989333 10.8544-40.823467 18.8416V216.132267H648.533333v572.0064h88.405334v-24.849067a184.593067 184.593067 0 0 0 97.211733 27.579733c51.473067 0 95.368533-18.090667 131.618133-54.340266a178.858667 178.858667 0 0 0 54.408534-131.208534c0-51.473067-18.158933-95.300267-54.408534-131.618133a179.268267 179.268267 0 0 0-131.618133-54.408533c-19.182933 0-38.024533 2.935467-56.388267 8.874666z m56.388266 79.598933c26.965333 0 50.039467 9.489067 69.2224 28.398933 18.909867 19.2512 28.398933 42.325333 28.398934 69.2224 0 26.624-9.489067 49.629867-28.398934 68.8128-19.182933 18.909867-42.325333 28.398933-69.2224 28.398934-26.624 0-49.5616-9.489067-68.8128-28.398934a94.549333 94.549333 0 0 1-28.398933-68.8128c0-26.897067 9.489067-49.9712 28.398933-69.2224a94.549333 94.549333 0 0 1 68.8128-28.398933z" p-id="18340"></path></svg>
+          <div>
+            <div class="color-picker" ref="bgcColorPicker"></div>
+          </div>
+        </div>
+
+        <div class="article-edit-option-item">
+          <svg @click="handleFontBold" t="1780809524238" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="19328" width="200" height="200"><path d="M136.562347 0m68.266666 0l0 0q68.266667 0 68.266667 68.266667l0 887.466666q0 68.266667-68.266667 68.266667l0 0q-68.266667 0-68.266666-68.266667l0-887.466666q0-68.266667 68.266666-68.266667Z" p-id="19329"></path><path d="M563.229013 136.533333a153.6 153.6 0 0 1 0 307.2H273.09568V136.533333h290.133333m0-136.533333H225.309013A88.746667 88.746667 0 0 0 136.562347 88.746667v486.058666a4.778667 4.778667 0 0 0 5.461333 5.461334h421.205333a290.133333 290.133333 0 0 0 0-580.266667z" p-id="19330"></path><path d="M597.362347 580.266667a153.6 153.6 0 0 1 0 307.2H273.09568V580.266667h324.266667m0-136.533334H136.562347v506.538667A73.728 73.728 0 0 0 210.290347 1024h387.072a290.133333 290.133333 0 0 0 0-580.266667z" p-id="19331"></path></svg>
+        </div>
+
+        <div class="article-edit-option-item">
+          <svg @click="handleFontUnderline" t="1780809675593" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="20313" width="200" height="200"><path d="M512 811.296a312 312 0 0 0 312-312V89.6h-112v409.696a200 200 0 1 1-400 0V89.6h-112v409.696a312 312 0 0 0 312 312zM864 885.792H160a32 32 0 0 0 0 64h704a32 32 0 0 0 0-64z" p-id="20314"></path></svg>
         </div>
       </div>
 
@@ -209,6 +346,7 @@ onMounted(async () => {
   position: fixed;
   top: 50px;
   left: 0px;
+  z-index: 100;
   display: flex;
   gap: 0 20px;
   width: 100%;

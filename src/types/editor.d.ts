@@ -6,4 +6,4 @@ export type FontOption = {
   value: string
 }
 
-export type FontOptionType = 'size' | 'color' | 'bold' | 'bgc' | 'family'
+export type FontOptionType = 'size' | 'color' | 'bold' | 'bgc' | 'family' | 'underline'

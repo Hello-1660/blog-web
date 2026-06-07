@@ -11,6 +11,7 @@
     "type-check": "vue-tsc --build"
   },
   "dependencies": {
+    "@simonwep/pickr": "^1.9.1",
     "@tiptap/extension-font-family": "^3.26.0",
     "@tiptap/extension-image": "^3.25.0",
     "@tiptap/extension-text-style": "^3.25.0",
