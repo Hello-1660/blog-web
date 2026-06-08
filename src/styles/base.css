@@ -13,6 +13,7 @@ html {
   --show-bgc: #ffffff;
   --hover-bgc: #f5f5f5;
   --font-color: #303030;
+  --login-bgc-img: url('/login-bg.png');
 }
 
 input {

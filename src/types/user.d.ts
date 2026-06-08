@@ -48,6 +48,8 @@ export type UserRegisterDto = {
   password: string;
   // 确认密码
   confirmPassword: string;
+  // 验证码
+  verificationCode: string;
 }
 
 /**
