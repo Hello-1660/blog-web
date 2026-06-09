@@ -3,8 +3,9 @@ import { login, register, getUserInfo } from '@/apis/user'
 import { resultPostProcessor } from '@/utils/result'
 import type { UserLoginDto, UserRegisterDto, UserInfo } from '@/types/user'
 import { useUserStore } from '@/stores/user'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { v } from 'vue-router/dist/index-ZwgQvn2r.js'
 
 // 用户信息存储
 const userStore = useUserStore()
@@ -26,11 +27,26 @@ const userRegisterDto = ref<UserRegisterDto>({
 
 // 路由
 const router = useRouter()
-// 邮箱输入框
-const emailInput = ref<HTMLDivElement | null>(null)
-// 密码输入框
-const passwordInput = ref<HTMLDivElement | null>(null)
+// 登录注册切换
+const isLogin = ref(true)
+// 验证码定时器
+const verificationCodeTimer = ref<number | null>(null)
+const verificationCodeCountDown = ref<number>(60)
+const verificationCodeCountDownShow = computed(() => verificationCodeCountDown)
 
+/**
+ * 切换注册
+ */
+const handleSwitchRegister = () => {
+  isLogin.value = false
+}
+
+/**
+ * 返回登录
+ */
+const handleReturnLogin = () => {
+  isLogin.value = true
+}
 /**
  * 用户登录
  */
@@ -64,28 +80,37 @@ const registerSubmit = async () => {
   }
 }
 
+/**
+ * 获取验证码
+ */
+const handleGetVerificationCode = () => {
+  if (verificationCodeTimer.value !== null) return
 
-const handleClickInput = (el: HTMLDivElement | null) => {
-  if (el) el.classList.add('login-input-label-active')
-}
+  verificationCodeCountDown.value--
 
-const handleFocusInput = (el: HTMLDivElement | null) => {
-  if (el) el.classList.remove('login-input-label-active')
+  verificationCodeTimer.value = setInterval(() => {
+    verificationCodeCountDown.value--
+
+    if (verificationCodeCountDown.value <= 0) {
+      verificationCodeTimer.value = null
+      verificationCodeCountDown.value = 60
+    }
+  }, 1000)
 }
 </script>
 
 <template>
   <div class="login-view-container">
     <div class="login-view-box">
-      <div class="login-view-box-logo">
+      <div class="login-view-box-logo" @click="handleReturnLogin">
         <img class="login-logo-img" src="/logo.png" />
         <div>
-          <div>欢迎登录</div>
-          <div>使用您的账号登录</div>
+          <div>欢迎{{ isLogin ? '登录' : '注册' }}</div>
+          <div>使用您的账号{{ isLogin ? '登录' : '注册' }}</div>
         </div>
       </div>
 
-      <div class="login-input-container">
+      <div class="login-input-container" v-if="isLogin">
         <div class="login-input-item">
           <input type="text" placeholder="邮箱" v-model="userLoginDto.email">
         </div>
@@ -102,8 +127,33 @@ const handleFocusInput = (el: HTMLDivElement | null) => {
           <button class="submit-btn login-btn">登录</button>
         </div>
 
-        <div class="login-input-item">
+        <div class="login-input-item" @click="handleSwitchRegister">
           <button class="submit-btn register-btn">注册新账号</button>
+        </div>
+      </div>
+
+      <div class="register-input-container" v-else>
+        <div class="register-input-item">
+          <input type="text" placeholder="邮箱" v-model="userRegisterDto.email">
+        </div>
+
+        <div class="register-input-item">
+          <input type="password" placeholder="密码" v-model="userRegisterDto.password">
+        </div>
+
+        <div class="register-input-item">
+          <input type="password" placeholder="确认密码" v-model="userRegisterDto.confirmPassword">
+        </div>
+
+        <div class="register-input-item">
+          <input type="text" class="register-input-verify-code" placeholder="验证码" v-model="userRegisterDto.verificationCode">
+          <button class="submit-btn get-verify-code-btn"
+          @click="handleGetVerificationCode"
+          >{{ verificationCodeTimer === null ? '获取验证码' : '请' + verificationCodeCountDownShow.value + '后重试' }}</button>
+        </div>
+
+        <div class="register-input-item">
+          <button class="submit-btn login-btn">注册</button>
         </div>
       </div>
     </div>
@@ -164,11 +214,13 @@ const handleFocusInput = (el: HTMLDivElement | null) => {
   color: gray;
 }
 
-.login-input-container {
+.login-input-container,
+.register-input-container {
   width: 100%;
 }
 
-.login-input-item {
+.login-input-item,
+.register-input-item {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -177,13 +229,18 @@ const handleFocusInput = (el: HTMLDivElement | null) => {
   margin-bottom: 15px;
 }
 
-.login-input-item input {
+.login-input-item input,
+.register-input-item input {
   width: 100%;
   height: 90%;
   border: 1px solid rgba(128, 128, 128, 0.605);
   border-radius: 8px;
   padding: 0 10px;
   font-size: 17px;
+}
+
+.register-input-verify-code {
+  flex: 7;
 }
 
 .reset-password-btn,
@@ -208,6 +265,16 @@ const handleFocusInput = (el: HTMLDivElement | null) => {
   color: #fff;
   font-size: 16px;
   border: none;
+}
+
+.get-verify-code-btn {
+  flex: 4;
+  color: #368ff4;
+  margin-left: 10px;
+}
+
+.verify-code-btn-sending {
+  color: #8ca8eb !important;
 }
 
 .login-btn {
