@@ -40,14 +40,19 @@ a {
 }
 
 .ProseMirror img {
-  box-sizing: border-box;
-  max-width: 100%;
+  display: block;
+  max-width: 50%;
   height: auto;
   border-radius: 4px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  margin: 0.5rem 0;
+  margin: 1rem auto;
 }
 
 .ProseMirror {
   font-size: 16 px;
+}
+
+.ProseMirror a {
+  color: #0074d9;
+  text-decoration: underline;
 }

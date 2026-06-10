@@ -5,7 +5,7 @@ import { getArticleById } from '@/apis/article'
 import type { Article } from '@/types/article'
 import EditorBox from './EditorBox.vue'
 import SelectList from './SelectList.vue'
-import type { SelectItem } from '@/types/common.js'
+import { img2Base64 } from '@/utils/img.ts'
 import type { FontOptionType } from '@/types/editor'
 import Pickr from '@simonwep/pickr'
 import '@simonwep/pickr/dist/themes/classic.min.css'
@@ -239,6 +239,23 @@ onMounted(async () => {
   }
 })
 
+/**
+ * 插入图片
+ * @param e 插入图片 
+ */
+const handleInsertImg = async (e: any) => {
+  const img = e.target.files[0]
+  if (!img) return
+  const data = await img2Base64(img)
+
+  if (typeof data === 'string') {
+    editorBox.value?.handleInsert({
+      type: 'img',
+      value: data
+    })
+  }
+}
+
 onUnmounted(() => {
   if (pickr) {
     pickr.destroyAndRemove();
@@ -292,6 +309,15 @@ onUnmounted(() => {
         <div class="article-edit-option-item">
           <svg @click="handleFontUnderline" t="1780809675593" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="20313" width="200" height="200"><path d="M512 811.296a312 312 0 0 0 312-312V89.6h-112v409.696a200 200 0 1 1-400 0V89.6h-112v409.696a312 312 0 0 0 312 312zM864 885.792H160a32 32 0 0 0 0 64h704a32 32 0 0 0 0-64z" p-id="20314"></path></svg>
         </div>
+
+        <div class="article-edit-option-item"> 
+          <label for="article-edit-option-item-file"
+          @click="editorBox?.editorFocus()"
+          >
+            <svg t="1781076801710" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3036" width="200" height="200"><path d="M896 626.592a16 16 0 0 0-7.68-13.664L715.872 507.84a16 16 0 0 0-20.704 3.52l-76 92.608-1.024 1.152a16 16 0 0 1-22.624 0.032L342.688 353.088a16.032 16.032 0 0 0-22.08-0.512l-187.36 170.656a15.936 15.936 0 0 0-5.248 11.84V800h768V626.592zM736 320a64 64 0 1 0 128 0 64 64 0 1 0-128 0z" p-id="3037"></path><path d="M32 128v768h960V128H32z m896 704H96V192h832v640z" p-id="3038"></path></svg>
+          </label>
+          <input type="file" id="article-edit-option-item-file" style="display: none;" @change="handleInsertImg">
+        </div>
       </div>
 
     <div class="article-edit-title">
@@ -304,6 +330,7 @@ onUnmounted(() => {
 
     <div class="article-edit-content">
       <EditorBox 
+      class="editor-edit-content-editor"
       ref="editorBox"
       @click="handleOpenOrCloseOptionList(true)"
       ></EditorBox>
@@ -340,6 +367,7 @@ onUnmounted(() => {
 .article-edit-content {
   background-color: yellow;
   overflow-y: hidden;
+  min-height: 400px;
 }
 
 .article-edit-option {
@@ -372,10 +400,15 @@ onUnmounted(() => {
   align-items: center;
 }
 
-.article-edit-option-item>.icon {
+.article-edit-option-item .icon {
   width: 20px;
   height: 20px;
   fill: #000;
   margin-right: 5px;
+}
+
+.editor-edit-content-editor {
+  width: 100%;
+  min-height: inherit;
 }
 </style>
