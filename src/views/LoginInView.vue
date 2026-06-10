@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { login, register, getUserInfo } from '@/apis/user'
+import { login, register, getRegisterVerificationCode } from '@/apis/user'
 import { resultPostProcessor } from '@/utils/result'
-import type { UserLoginDto, UserRegisterDto, UserInfo } from '@/types/user'
+import type { UserLoginDto, UserRegisterDto } from '@/types/user'
 import { useUserStore } from '@/stores/user'
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { v } from 'vue-router/dist/index-ZwgQvn2r.js'
+import showTopTip from '@/components/showTopTip'
 
 // 用户信息存储
 const userStore = useUserStore()
@@ -33,11 +33,34 @@ const isLogin = ref(true)
 const verificationCodeTimer = ref<number | null>(null)
 const verificationCodeCountDown = ref<number>(60)
 const verificationCodeCountDownShow = computed(() => verificationCodeCountDown)
+// 登录数据校验
+const loginDataVerify = computed(() => {
+  return loginRules.email.test(userLoginDto.value.email) && loginRules.password.test(userLoginDto.value.password)
+})
+// 注册数据校验
+const registerDataVerify = computed(() => {
+  return registerRules.email.test(userRegisterDto.value.email) 
+    && registerRules.password.test(userRegisterDto.value.password) 
+    && registerRules.verificationCode.test(userRegisterDto.value.verificationCode)
+    && userRegisterDto.value.password === userRegisterDto.value.confirmPassword
+})
+// 登录校验规则
+const loginRules = {
+  email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+  password: /^[a-zA-Z0-9]{6,20}$/
+}
+// 注册数据校验
+const registerRules = {
+  email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+  password: /^[a-zA-Z0-9]{6,20}$/,
+  verificationCode: /^[0-9]{6}$/
+}
 
 /**
  * 切换注册
  */
 const handleSwitchRegister = () => {
+  userRegisterDto.value = { ...userRegisterDto.value, email: '', password: '', confirmPassword: '', verificationCode: '' }
   isLogin.value = false
 }
 
@@ -51,17 +74,25 @@ const handleReturnLogin = () => {
  * 用户登录
  */
 const loginSubmit = async () => {
-  if (!(userLoginDto.value.email && userLoginDto.value.password)) return 
+  if (!loginDataVerify.value) return 
   const result = await login(userLoginDto.value)
   resultPostProcessor(result, {
     success: () => {
       userStore.setUserInfo(result.data)
       userStore.setToken(result.data.token)
-
+      showTopTip({
+        message: '登录成功',
+        type: 'success',
+        duration: 3000
+      })
       router.push({ path: '/' })
     },
     failed: () => {
-      console.error(result.message)
+      showTopTip({
+        message: result.message,
+        type: 'error',
+        duration: 3000
+      })
     }
   })  
 }
@@ -70,20 +101,62 @@ const loginSubmit = async () => {
  * 用户注册
  */
 const registerSubmit = async () => { 
-  if (!(userRegisterDto.value.nickname && userRegisterDto.value.email && userRegisterDto.value.password && userRegisterDto.value.confirmPassword)) return
+  if (!registerDataVerify.value) return
+  // 生成随机昵称
+  userRegisterDto.value.nickname = generateRandomNickName()
   const result = await register(userRegisterDto.value)
 
   if (result.code === 200) {
     userLoginDto.value = result.data
+    showTopTip({
+      message: '注册成功',
+      type: 'success',
+      duration: 3000
+    })
+    isLogin.value = true
+    userLoginDto.value.email = userRegisterDto.value.email
+    userLoginDto.value.password = userRegisterDto.value.password
+
+
   } else {
-    console.error(result.message)
+    showTopTip({
+      message: result.message,
+      type: 'error',
+      duration: 3000
+    })
   }
 }
 
 /**
  * 获取验证码
  */
-const handleGetVerificationCode = () => {
+const handleGetVerificationCode = async () => {
+  if(!registerRules.email.test(userRegisterDto.value.email)) return
+
+  const result = await getRegisterVerificationCode(userRegisterDto.value.email)
+  resultPostProcessor(result, {
+    success: () => {
+      showTopTip({
+        message: '验证码发送成功',
+        type: 'success',
+        duration: 3000
+      })
+      handleGetVerificationCodeAnimation()
+    },
+    failed: () => {
+      showTopTip({
+        message: result.message,
+        type: 'error',
+        duration: 3000
+      })
+    }
+  })
+}
+
+/**
+ * 获取验证码动画
+ */
+const handleGetVerificationCodeAnimation = () => {
   if (verificationCodeTimer.value !== null) return
 
   verificationCodeCountDown.value--
@@ -96,6 +169,14 @@ const handleGetVerificationCode = () => {
       verificationCodeCountDown.value = 60
     }
   }, 1000)
+}
+
+/**
+ * 生成随机昵称
+ */
+const generateRandomNickName = () => {
+  const timestamp = Date.now() +  ''
+  return '用户' + timestamp.slice(-8)
 }
 </script>
 
@@ -124,11 +205,14 @@ const handleGetVerificationCode = () => {
         </div>
 
         <div class="login-input-item">
-          <button class="submit-btn login-btn">登录</button>
+          <button class="submit-btn login-btn" 
+          :class="{ 'disable-sub-btn' : !loginDataVerify }"
+          :disabled="!loginDataVerify" 
+          @click="loginSubmit">登录</button>
         </div>
 
         <div class="login-input-item" @click="handleSwitchRegister">
-          <button class="submit-btn register-btn">注册新账号</button>
+          <button class="submit-btn register-btn" :disabled="registerDataVerify">注册新账号</button>
         </div>
       </div>
 
@@ -149,11 +233,16 @@ const handleGetVerificationCode = () => {
           <input type="text" class="register-input-verify-code" placeholder="验证码" v-model="userRegisterDto.verificationCode">
           <button class="submit-btn get-verify-code-btn"
           @click="handleGetVerificationCode"
+          :disabled="!registerRules.email.test(userRegisterDto.email)"
           >{{ verificationCodeTimer === null ? '获取验证码' : '请' + verificationCodeCountDownShow.value + '后重试' }}</button>
         </div>
 
         <div class="register-input-item">
-          <button class="submit-btn login-btn">注册</button>
+          <button class="submit-btn login-btn" 
+          :class="{ 'disable-sub-btn' : !registerDataVerify }"
+          @click="registerSubmit"
+          :disabled="!registerDataVerify"
+          >注册</button>
         </div>
       </div>
     </div>
@@ -284,5 +373,10 @@ const handleGetVerificationCode = () => {
 .register-btn {
   background-color: var(--base-bgc);
   color: #4171e1;
+}
+
+.disable-sub-btn {
+  background: linear-gradient(to right, #aab8d9, #649fe2);
+  cursor: not-allowed;
 }
 </style>

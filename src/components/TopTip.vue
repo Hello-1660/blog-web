@@ -1,34 +1,40 @@
 <script lang="ts" setup>
-import { ref, watch } from 'vue'
+import { ref, onMounted } from 'vue'
 
-const prop = defineProps<{
+const props = defineProps<{
   message: string
-  visible: boolean
+  type?: 'success' | 'warning' | 'error' | 'info'
   duration?: number
 }>()
 
 const emit = defineEmits<{
-  (e: 'update:visible', value: boolean): void
+  (e: 'closed'): void
 }>()
 
-let timer: ReturnType<typeof setTimeout> | null = null
+const visible = ref(false)
 
-watch(() => prop.visible, (value) => {
-  if (value && prop.duration) {
-    timer = setTimeout(() => {
-      emit('update:visible', false)
-    }, prop.duration)
-  } else if (timer) {
-    clearTimeout(timer)
-    timer = null
+onMounted(() => {
+  visible.value = true
+  if (props.duration && props.duration > 0) {
+    setTimeout(() => close(), props.duration)
   }
 })
+
+function close() {
+  visible.value = false
+}
+
+function onLeave() {
+  emit('closed')
+}
 </script>
 
 <template>
   <teleport to="body">
-    <Transition name="tip">
-      <div v-if="visible" class="top-tip">{{ message }}</div>
+    <Transition name="tip" @after-leave="onLeave">
+      <div v-if="visible" class="top-tip" :class="`top-tip--${type || 'info'}`">
+        {{ message }}
+      </div>
     </Transition>
   </teleport>
 </template>
@@ -36,22 +42,41 @@ watch(() => prop.visible, (value) => {
 <style scoped>
 .top-tip {
   position: fixed;
-  top: 200px;
+  top: 80px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 10px 20px;
-  background-color: #333;
-  color: #fff;
+  padding: 10px 24px;
   border-radius: 4px;
   z-index: 9999;
+  font-size: 16px;
+  white-space: nowrap;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* 进入/离开动画 */
-.tip-enter-active, .tip-leave-active {
+.top-tip--info {
+  background-color: #f4f4f5;
+  color: #909399;
+}
+.top-tip--success {
+  background-color: #f0f9eb;
+  color: #67c23a;
+}
+.top-tip--warning {
+  background-color: #fdf6ec;
+  color: #e6a23c;
+}
+.top-tip--error {
+  background-color: #fef0f0;
+  color: #f56c6c;
+}
+
+.tip-enter-active,
+.tip-leave-active {
   transition: all 0.3s ease;
 }
-.tip-enter-from, .tip-leave-to {
+.tip-enter-from,
+.tip-leave-to {
   opacity: 0;
-  transform: translateX(-50%) translateY(-10px);  /* 从上方轻微滑入 */
+  transform: translateX(-50%) translateY(-10px);
 }
 </style>

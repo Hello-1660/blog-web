@@ -55,3 +55,12 @@ export function getUserLikeArticleList(): Promise<Result<UserLikeArticle[]>> {
 export function userUpdate(data: UserUpdateDto): Promise<Result<UserVo>> {
   return http.post(`${BASE_URL}/update`, data)
 } 
+
+/**
+ * 获取注册验证码
+ * @param email 邮箱
+ * @returns 验证码
+ */
+export function getRegisterVerificationCode(email: string): Promise<Result<String>> {
+  return http.get(`${BASE_URL}/verificationCode/${email}`)
+}
