@@ -30,11 +30,19 @@ const handleLookArticle = (id: number) => {
 }
 
 onMounted(async () => {
-  const date = await getCategoryList()
-  categoryList.value = date.data
+  try {
+    const result = await getCategoryList()
+    categoryList.value = result.data
+  } catch (e) {
+    console.error('分类列表加载失败:', e)
+  }
 
-  const hot = await getHotDetail()
-  hotArticleList.value = hot.data
+  try {
+    const hot = await getHotDetail()
+    hotArticleList.value = hot.data
+  } catch (e) {
+    console.error('热门文章加载失败:', e)
+  }
 })
 </script>
 

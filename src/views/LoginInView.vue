@@ -3,6 +3,7 @@ import { login, register, getRegisterVerificationCode } from '@/apis/user'
 import { resultPostProcessor } from '@/utils/result'
 import type { UserLoginDto, UserRegisterDto } from '@/types/user'
 import { useUserStore } from '@/stores/user'
+import { setTokens } from '@/utils/http'
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import showTopTip from '@/components/showTopTip'
@@ -80,6 +81,8 @@ const loginSubmit = async () => {
     success: () => {
       userStore.setUserInfo(result.data)
       userStore.setToken(result.data.token)
+      userStore.setRefreshToken(result.data.refreshToken)
+      setTokens(result.data.token, result.data.refreshToken)
       showTopTip({
         message: '登录成功',
         type: 'success',

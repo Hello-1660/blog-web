@@ -56,3 +56,16 @@ a {
   color: #0074d9;
   text-decoration: underline;
 }
+
+.div-hover-alt {
+  position: fixed;
+  pointer-events: none; /* 不阻挡鼠标事件 */
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  z-index: 9999;
+  transform: translate(10px, 10px); /* 偏移一点，避免被鼠标挡住 */
+  white-space: nowrap; /* 防止文字换行 */
+}

@@ -1,4 +1,9 @@
 <script setup lang="ts">
+import { useUserStore } from '@/stores/user'
+import { restoreTokens } from '@/utils/http'
+
+const userStore = useUserStore()
+restoreTokens(userStore.token, userStore.refreshToken)
 </script>
 
 <template>

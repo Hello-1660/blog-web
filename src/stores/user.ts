@@ -5,8 +5,10 @@ import type { UserInfo } from '@/types/user'
 export const useUserStore = defineStore('user', () => {
   // 用户信息
   const userInfo = ref<UserInfo | null>(null)
-  // token 令牌
+  // access token 令牌
   const token = ref('')
+  // refresh token 令牌
+  const refreshToken = ref('')
 
   // 是否登录
   const isLogin = computed(() => !!token.value)
@@ -17,6 +19,14 @@ export const useUserStore = defineStore('user', () => {
    */
   const setToken = (t: string) => {
     token.value = t
+  }
+
+  /**
+   * 设置 refresh token
+   * @param t refresh token
+   */
+  const setRefreshToken = (t: string) => {
+    refreshToken.value = t
   }
 
   /**
@@ -32,13 +42,17 @@ export const useUserStore = defineStore('user', () => {
    */
   const clearUserInfo = () => {
     userInfo.value = null
+    token.value = ''
+    refreshToken.value = ''
   }
 
   return {
     userInfo,
     token,
+    refreshToken,
     isLogin,
     setToken,
+    setRefreshToken,
     setUserInfo,
     clearUserInfo
   }
