@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue'
-import { useRoute } from 'vue-router'
-import { getArticleById } from '@/apis/article'
-import type { Article } from '@/types/article'
+import { useRouter } from 'vue-router'
+import { getArticleById, saveArticle } from '@/apis/article'
+import type { Article, ArticleDto } from '@/types/article'
 import EditorBox from './EditorBox.vue'
 import SelectList from './SelectList.vue'
-import { img2Base64 } from '@/utils/img.ts'
+import { imgUpload } from '@/utils/img.ts'
 import type { FontOptionType } from '@/types/editor'
 import Pickr from '@simonwep/pickr'
 import '@simonwep/pickr/dist/themes/classic.min.css'
@@ -13,37 +13,34 @@ import type { Category } from '@/types/category'
 import { getCategoryList } from '@/apis/category'
 import { resultPostProcessor } from '@/utils/result'
 import SwitchButton from './SwitchButton.vue'
+import showTopTip from './showTopTip.ts'
 
 // 文章对象
 class ArticleObj { 
-    id: number
-    userId: number
     icon: string
     title: string
     content: string
-    createTime: string
-    updateTime: string
     sort: number
     status: number
     categoryId: number
 
     constructor() {
-        this.id = -1
-        this.userId = -1
-        this.icon = ''
+        this.icon = '/default.png'
         this.title = ''
         this.content = ''
-        this.createTime = ''
-        this.updateTime = ''
         this.sort = 0
         this.status = 0
-        this.categoryId = -1
+        this.categoryId = 0
     }
 }
 
 
 // 路由
-const route = useRoute()
+const router = useRouter()
+// 文章id
+const prop = defineProps<{
+  id?: number | null 
+}>()
 // articleEditTitleInput ref
 const articleEditTitleInput = ref<HTMLInputElement | null>(null)
 // editorBox ref
@@ -51,7 +48,11 @@ const editorBox = ref<InstanceType<typeof EditorBox> | null>(null)
 // 是否为新增文章
 const isNew = ref(true)
 // 文章
-const article = ref<Article>(new ArticleObj())
+const article = ref<ArticleDto>(new ArticleObj())
+// 文章数据是否有效
+const isValidArticle = computed(() => {
+  return article.value.title !== '' && article.value.categoryId !== -1 && article.value.content !== ''
+})
 // 分类列表
 const categoryList = ref<Category[]>([])
 // 分类下拉列表
@@ -234,13 +235,11 @@ const handleOpenOrCloseOptionList = (value: boolean) => {
  const handleInsertImg = async (e: any) => {
   const img = e.target.files[0]
   if (!img) return
-  const data = await img2Base64(img)
-
-  if (typeof data === 'string') {
-    editorBox.value?.handleInsert({
-      type: 'img',
-      value: data
-    })
+  try {
+    const url = await imgUpload(img)
+    editorBox.value?.handleInsert({ type: 'img', value: url })
+  } catch (err: any) {
+    showTopTip({ type: 'error', message: err.message, duration: 3000 })
   }
 }
 
@@ -251,9 +250,12 @@ const handleOpenOrCloseOptionList = (value: boolean) => {
 const handleInsertArticleIcon = async (e: any) => {
   const img = e.target.files[0]
   if (!img) return
-  const data = await img2Base64(img)
-
-  if (typeof data === 'string') article.value.icon = data
+  try {
+    const url = await imgUpload(img)
+    article.value.icon = url
+  } catch (err: any) {
+    showTopTip({ type: 'error', message: err.message, duration: 3000 })
+  }
 }
 
 /**
@@ -288,12 +290,52 @@ const handleArticleStatus = (status: boolean) => {
   }
 }
 
+/**
+ * 提交文章
+ */
+const handleSubmitArticle = async () => {
+  
+  if (isNew.value) {
+    const content = editorBox.value?.editorValue()
+    if (typeof content === 'string') article.value.content = content
+    if (!isValidArticle.value) {
+      showTopTip({
+        type: 'error',
+        message: '请输入文章内容',
+        duration: 3000
+      }) 
+      return
+    }
+
+    const data = await saveArticle(article.value)
+    resultPostProcessor(data, {
+      success: () => showTopTip(data.message),
+      failed: () => showTopTip({
+        type: 'error',
+        message: data.message,
+        duration: 3000
+      })
+    })
+  } 
+}
+
 onMounted(async () => {
-  const id =  route.params.id
-  if (id) {
-    const data = await getArticleById(parseInt(id as string, 10))
-    article.value = data.data
-    isNew.value = false
+  if (prop.id) {
+    const data = await getArticleById(prop.id)
+    resultPostProcessor(data, {
+      success: () => {
+        article.value = data.data
+      },
+      failed: () => {
+        showTopTip({
+          type: 'error',
+          message: data.message,
+          duration: 3000
+        })
+
+        router.go(-1)
+      }
+    })
   }
 
   // 标题输入框自动聚焦
@@ -413,7 +455,7 @@ onUnmounted(() => {
       <div class="article-edit-message-icon">
         <label for="article-edit-message-icon-input">
           <img 
-          :src="article.icon !== '' ? article.icon : '/default.png'" 
+          :src="article.icon" 
           v-alt="optionHoverAlt.insertArticleIcon"
           class="article-edit-message-icon-box">
         </label>
@@ -443,6 +485,13 @@ onUnmounted(() => {
         :status="!!article.status"
         @switch-status="handleArticleStatus"
         ></SwitchButton>
+      </div>
+
+      <div class="article-edit-message-item">
+        <button class="article-edit-message-submit-btn article-edit-message-btn"
+        @click="handleSubmitArticle"
+        >保存</button>
+        <button class="article-edit-message-save-btn article-edit-message-btn">暂存</button>
       </div>
     </div>
   </div>

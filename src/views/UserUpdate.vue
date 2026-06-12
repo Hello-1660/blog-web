@@ -5,9 +5,10 @@ import { useRouter } from 'vue-router'
 import SwitchButton from '@/components/SwitchButton.vue'
 import type { UserUpdateDto } from '@/types/user'
 import type { Theme } from '@/types/theme'
-import { img2Base64 } from '@/utils/img'
+import { imgUpload } from '@/utils/img'
 import { userUpdate } from '@/apis/user'
 import { resultPostProcessor } from '@/utils/result'
+import showTopTip from '@/components/showTopTip.ts'
 
 // 用户更新对象
 class UserUpdateDtoObj {
@@ -87,9 +88,11 @@ const dataValid = {
 const handleIconChange = async (e: any) => {
   const img = e.target.files[0]
   if (!img) return
-  const data = await img2Base64(img)
-  if (typeof data === 'string') {
-    userInfoData.value.icon = data
+  try {
+    const url = await imgUpload(img)
+    userInfoData.value.icon = url
+  } catch (err: any) {
+    showTopTip({ type: 'error', message: err.message, duration: 3000 })
   }
 }
 

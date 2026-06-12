@@ -51,9 +51,10 @@ const routes = [
         component: ArticleView,
       },
       {
-        path: '/article/edit',
+        path: '/article/edit/:id?',
         name: 'articleEdit',
         component: ArticleEditor,
+        props: true,
       },
       {
         path: '/user/update',
@@ -73,7 +74,6 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: routes,
 })
-
 
 // 导航守卫
 router.beforeEach((to, from) => {

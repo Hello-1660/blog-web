@@ -3,11 +3,10 @@ import { useEditor, EditorContent } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
 import Image from '@tiptap/extension-image'
 import { TextStyleKit } from '@tiptap/extension-text-style'
-import { img2Base64 } from '@/utils/img'
+import { imgUpload } from '@/utils/img'
 import type { FontOption, InsertOption } from '@/types/editor'
 import FontFamily from '@tiptap/extension-font-family'
 import Link from '@tiptap/extension-link'
-
 
 /**
  * 处理粘贴事件
@@ -22,8 +21,10 @@ const handlePaste = (event: ClipboardEvent): boolean => {
 
   // 处理图片
   if (file?.type.startsWith('image/')) {
-    img2Base64(file).then(base64 => {
-      editor.value?.commands.setImage({ src: base64 as string })
+    imgUpload(file).then(url => {
+      editor.value?.commands.setImage({ src: url })
+    }).catch(err => {
+      console.error('图片上传失败:', err.message)
     })
     return true
   }
@@ -132,10 +133,15 @@ const editorFocus = () => {
   editor.value?.commands.focus()
 }
 
+const editorValue = () => {
+  return editor.value?.getHTML()
+}
+
 defineExpose({
   handleFontOption,
   handleInsert,
-  editorFocus
+  editorFocus,
+  editorValue
 })
 </script>
 

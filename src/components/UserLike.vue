@@ -30,7 +30,9 @@ onMounted(async () => {
     v-for="item in articleList" :key="item.articleId"
     @click="handleLookArticle(item.articleId)"
     >
-      <div class="like-icon"></div>
+      <div class="like-icon">
+        <img :src="item.icon" alt="">
+      </div>
       <div class="like-title">{{ item.title }}</div>
       <div class="like-option">
         <div class="like-time">{{ formatDate(item.likeTime) }}</div>
@@ -68,6 +70,12 @@ onMounted(async () => {
 .like-icon {
   width: 100%;
   height: 200px;
+  padding: 5px;
+}
+
+.like-icon > img {
+  width: 100%;
+  height: 100%;
 }
 
 .like-title {
