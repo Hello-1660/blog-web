@@ -118,6 +118,10 @@ onMounted(async () => {
   fill: var(--font-color)
 }
 
+.article-add:hover {
+  transform: scale(1.05);
+}
+
 .article-item {
   position: relative;
   display: flex;
@@ -128,6 +132,10 @@ onMounted(async () => {
   background-color: var(--show-bgc);
   user-select: none;
   transition: transform 0.3s;
+}
+
+.article-item:hover {
+  transform: scale(1.05);
 }
 
 .article-item-show-function>.function-list {

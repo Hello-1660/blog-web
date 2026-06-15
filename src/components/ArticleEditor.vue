@@ -2,7 +2,7 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { getArticleById, saveArticle } from '@/apis/article'
-import type { Article, ArticleDto } from '@/types/article'
+import type { ArticleDto } from '@/types/article'
 import EditorBox from './EditorBox.vue'
 import SelectList from './SelectList.vue'
 import { imgUpload } from '@/utils/img.ts'
@@ -239,7 +239,7 @@ const handleOpenOrCloseOptionList = (value: boolean) => {
     const url = await imgUpload(img)
     editorBox.value?.handleInsert({ type: 'img', value: url })
   } catch (err: any) {
-    showTopTip({ type: 'error', message: err.message, duration: 3000 })
+    showTopTip({ type: 'error', message: '插入图片过大', duration: 3000 })
   }
 }
 

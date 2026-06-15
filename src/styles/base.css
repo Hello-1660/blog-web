@@ -13,6 +13,7 @@ html {
   --show-bgc: #ffffff;
   --hover-bgc: #f5f5f5;
   --font-color: #303030;
+  --font-base-color: #6c6c6c8a;
   --login-bgc-img: url('/login-bg.png');
 }
 
@@ -69,3 +70,4 @@ a {
   transform: translate(10px, 10px); /* 偏移一点，避免被鼠标挡住 */
   white-space: nowrap; /* 防止文字换行 */
 }
+

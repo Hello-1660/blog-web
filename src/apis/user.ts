@@ -57,6 +57,15 @@ export function userUpdate(data: UserUpdateDto): Promise<Result<UserVo>> {
 } 
 
 /**
+ * 点赞/取消点赞文章
+ * @param articleId 文章编号
+ * @returns 无
+ */
+export function likeArticle(articleId: number): Promise<Result<void>> {
+  return http.post(`${BASE_URL}/likeArticle`, null, { params: { articleId } })
+}
+
+/**
  * 获取注册验证码
  * @param email 邮箱
  * @returns 验证码

@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import type { ArticleVo } from '@/types/article'
 import { getArticleById } from '@/apis/article'
 import { formatDate } from '@/utils/date'
+import ActionBar from './ActionBar.vue'
 
 // 路由
 const router = useRouter()
@@ -17,10 +18,6 @@ onMounted(async () => {
 
     const data = await getArticleById(id)
     article.value = data.data
-
-    if (article.value.userId) {
-
-    }
   }
 })
 </script>
@@ -38,12 +35,9 @@ onMounted(async () => {
       </div>
     </div>
 
-    <div class="article-view-body" v-html="article.content"></div>
-    <div class="article-view-function">
-      <div class="like-button">
-        
-      </div>
+    <div class="article-view-body" v-html="article.content">
     </div>
+    <ActionBar :articleId="article.id" />
   </div>
 </template>
 
@@ -107,13 +101,12 @@ onMounted(async () => {
   font-size: 12px;
 }
 
-.article-view-function {
-  position: fixed;
-  width: 60px;
-  height: 60px;
-  bottom: 68px;
-  right: 120px;
-  border-radius: 50%;
-  background-color: red;
+.article-view-body :deep(img) {
+  display: block;
+  max-width: 50%;
+  height: auto;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin: 1rem auto;
 }
 </style>

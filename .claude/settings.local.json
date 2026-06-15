@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(npm install *)",
-      "Bash(pnpm add *)"
+      "Bash(pnpm add *)",
+      "Bash(reg query *)",
+      "Bash(npx vue-tsc *)"
     ]
   }
 }

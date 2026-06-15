@@ -37,7 +37,12 @@ const handleUserUpdate = () => {
 
       <div class="user-account">
         <div class="user-name">{{ computedUserInfo.nickname }}</div>
+        <div class="user-line">
+          <div>关注<span>{{ 2 }}</span></div>
+          <div>粉丝<span>{{ 3 }}</span></div>
+        </div>
         <div class="user-email">{{ computedUserInfo.email }}</div>
+        <div class="user-description">{{ computedUserInfo.description }}</div>
       </div>
     </div>
 
@@ -63,16 +68,17 @@ const handleUserUpdate = () => {
 .user-head-box {
   display: flex;
   justify-content: start;
-  align-items: center;
+  align-items: start;
   width: 100%;
-  height: 280px;
+  height: 200px;
+  margin-bottom: 80px;
 }
 
 .user-icon { 
-  width: 200px;
-  height: 200px;
+  width: 200px !important;
+  height: 200px !important;
   border-radius: 50%; 
-  margin: 20px 100px 20px 20px;
+  /* background: pink !important; */
 }
 
 .user-icon>img {
@@ -82,11 +88,12 @@ const handleUserUpdate = () => {
 }
 
 .user-account {
-  flex: 1;
+  width: calc(100% - 250px);
+  margin-left: 50px;
 }
 
 .user-name {
-  font-size: 70px;
+  font-size: 40px;
   font-weight: 400;
   color: #333;
   font-family: 'LocalSerif' !important;
@@ -95,13 +102,39 @@ const handleUserUpdate = () => {
   user-select: none;
 }
 
+.user-line {
+  display: flex;
+  justify-content: start;
+  margin-bottom: 10px;
+}
+
+.user-line>div {
+  width: 100px;
+  color: var(--font-base-color) !important;
+}
+
+.user-line>div>span {
+  margin-left: 10px;
+  color: var(--font-color)
+}
+
 .user-email {
   font-size: 20px;
   font-weight: 400;
-  color: #333;
+  color: var(--font-color);
   font-family: 'LocalSerif' !important;
   font-weight: 200;
   user-select: none;
+  margin-bottom: 10px;
+}
+
+.user-description {
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--font-color);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .user-select {
