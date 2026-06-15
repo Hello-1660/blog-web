@@ -137,11 +137,16 @@ const editorValue = () => {
   return editor.value?.getHTML()
 }
 
+const setContent = (content: string) => {
+  editor.value?.commands.setContent(content)
+}
+
 defineExpose({
   handleFontOption,
   handleInsert,
   editorFocus,
-  editorValue
+  editorValue,
+  setContent
 })
 </script>
 

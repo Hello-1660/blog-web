@@ -63,7 +63,9 @@ onMounted(async () => {
       :key="item.id" 
       @click="handleLookArticle(item.id)"
       >
-        <div class="hot-article-icon"></div>
+        <div class="hot-article-icon">
+          <img :src="item.icon" alt="文章封面" />
+        </div>
         <div class="hot-article-body">
           <div class="hot-article-title">{{ item.title }}</div>
           <div class="hot-article-status">
@@ -130,6 +132,13 @@ onMounted(async () => {
 .hot-article-icon {
   width: 100%;
   height: 300px;
+  padding: 10px;
+}
+
+.hot-article-icon>img {
+  width: 100%;
+  height: 80%;
+  object-fit: cover;
 }
 
 .hot-article-body {

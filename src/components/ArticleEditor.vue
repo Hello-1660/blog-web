@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { getArticleById, saveArticle } from '@/apis/article'
+import { getArticleById, saveArticle, updateArticle } from '@/apis/article'
 import type { ArticleDto } from '@/types/article'
 import EditorBox from './EditorBox.vue'
 import SelectList from './SelectList.vue'
@@ -293,12 +293,11 @@ const handleArticleStatus = (status: boolean) => {
 /**
  * 提交文章
  */
-const handleSubmitArticle = async () => {
-  
-  if (isNew.value) {
-    const content = editorBox.value?.editorValue()
-    if (typeof content === 'string') article.value.content = content
-    if (!isValidArticle.value) {
+const handleSubmitArticle = async (type: 0 | 1) => {
+  const content = editorBox.value?.editorValue()
+  if (typeof content === 'string') article.value.content = content
+  article.value.status = type
+  if (!isValidArticle.value) {
       showTopTip({
         type: 'error',
         message: '请输入文章内容',
@@ -307,6 +306,7 @@ const handleSubmitArticle = async () => {
       return
     }
 
+  if (isNew.value === true) {
     const data = await saveArticle(article.value)
     resultPostProcessor(data, {
       success: () => showTopTip(data.message),
@@ -316,15 +316,35 @@ const handleSubmitArticle = async () => {
         duration: 3000
       })
     })
-  } 
+  } else {
+    const data = await updateArticle({
+      id: prop.id!,
+      icon: article.value.icon,
+      title: article.value.title,
+      content: article.value.content,
+      sort: article.value.sort,
+      status: article.value.status,
+      categoryId: article.value.categoryId,
+    })
+    resultPostProcessor(data, {
+      success: () => showTopTip(data.message),
+      failed: () => showTopTip({
+        type: 'error',
+        message: data.message,
+        duration: 3000
+      })
+    })
+  }
 }
 
 onMounted(async () => {
   if (prop.id) {
+    isNew.value = false
     const data = await getArticleById(prop.id)
     resultPostProcessor(data, {
       success: () => {
         article.value = data.data
+        editorBox.value?.setContent(data.data.content)
       },
       failed: () => {
         showTopTip({
@@ -489,9 +509,9 @@ onUnmounted(() => {
 
       <div class="article-edit-message-item">
         <button class="article-edit-message-submit-btn article-edit-message-btn"
-        @click="handleSubmitArticle"
+        @click="handleSubmitArticle(1)"
         >保存</button>
-        <button class="article-edit-message-save-btn article-edit-message-btn">暂存</button>
+        <button class="article-edit-message-save-btn article-edit-message-btn" @click="handleSubmitArticle(0)">暂存</button>
       </div>
     </div>
   </div>

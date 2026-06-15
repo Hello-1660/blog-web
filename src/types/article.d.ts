@@ -39,6 +39,11 @@ export type ArticleDto = {
     categoryId: number;
 }
 
+export type ArticleUpdateDto = {
+    // 文章编号
+    id: number;
+} & ArticleDto;
+
 /**
  * 用户点赞文章
  */
@@ -121,4 +126,6 @@ export type ArticleVo = Article & {
     userNickname: string;
     // 文章作者头像
     userIcon: string;
+    // 当前用户是否已点赞
+    isLiked: boolean;
 }

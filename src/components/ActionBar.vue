@@ -6,9 +6,10 @@ import FavoriteSelector from './FavoriteSelector.vue'
 
 const props = defineProps<{
   articleId: number
+  initialLiked?: boolean
 }>()
 
-const isLiked = ref(false)
+const isLiked = ref(props.initialLiked || false)
 const showFavorite = ref(false)
 
 async function handleLike() {

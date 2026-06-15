@@ -37,7 +37,7 @@ onMounted(async () => {
 
     <div class="article-view-body" v-html="article.content">
     </div>
-    <ActionBar :articleId="article.id" />
+    <ActionBar :articleId="article.id" :initialLiked="article.isLiked" />
   </div>
 </template>
 

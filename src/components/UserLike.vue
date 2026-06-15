@@ -58,7 +58,7 @@ onMounted(async () => {
   height: 300px;
   border-radius: 4px;
   user-select: none;
-  padding: 10px 0;
+  padding: 0px 0px 10px 0px;
   background-color: var(--show-bgc);
   transition: transform 0.3s;
 }

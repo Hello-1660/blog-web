@@ -2,15 +2,21 @@
 import { ref, onMounted } from 'vue'
 import type { Article } from '@/types/article'
 import { getArticleList } from '@/apis/user'
+import { deleteArticle } from '@/apis/article'
 import { formatDateTime } from '@/utils/date'
 import { useRouter } from 'vue-router'
 import { stripHtml } from '@/utils/editor'
-import FunctionList from '@/components/FunctionList.vue'    
+import FunctionList from '@/components/FunctionList.vue'
+import Modal from '@/components/Modal.vue'
+import showTopTip from '@/components/showTopTip.ts'
 
 // 路由
 const router = useRouter()
 // 用户作品列表
 const articleList = ref<Article[]>([])
+// 删除确认弹窗
+const showDeleteModal = ref(false)
+const deleteTargetId = ref<number | null>(null)
 
 
 
@@ -35,6 +41,32 @@ const handleAddArticle = () => {
  */
 const handleUpdateArticle = (id: number) => {
   router.push({ name: 'articleEdit', params: { id: id } })
+}
+
+/**
+ * 删除文章
+ * @param id 文章编号
+ */
+const handleDeleteArticle = (id: number) => {
+  deleteTargetId.value = id
+  showDeleteModal.value = true
+}
+
+/**
+ * 确认删除文章
+ */
+const handleConfirmDelete = async () => {
+  if (deleteTargetId.value == null) return
+  try {
+    await deleteArticle(deleteTargetId.value)
+    articleList.value = articleList.value.filter(a => a.id !== deleteTargetId.value)
+    showTopTip.success('删除成功')
+  } catch {
+    showTopTip.error('删除失败')
+  } finally {
+    showDeleteModal.value = false
+    deleteTargetId.value = null
+  }
 }
 
 const handleMouseEnter = (el: MouseEvent) => {
@@ -71,7 +103,7 @@ onMounted(async () => {
     :type="{ del: true, update: true }"
     :id="article.id"
     @update-click="handleUpdateArticle"
-    @del-click="handleUpdateArticle"
+    @del-click="handleDeleteArticle"
     />
       <div class="article-icon">
         <img :src="article.icon" alt="">
@@ -93,6 +125,16 @@ onMounted(async () => {
       </div>
     </div>
   </div>
+
+  <Modal :visible="showDeleteModal" title="删除作品" @close="showDeleteModal = false">
+    <div class="delete-confirm">
+      <p>确定要删除该作品吗？删除后无法恢复。</p>
+      <div class="delete-confirm-footer">
+        <button class="btn-cancel" @click="showDeleteModal = false">取消</button>
+        <button class="btn-confirm" @click="handleConfirmDelete">确定删除</button>
+      </div>
+    </div>
+  </Modal>
 </template>
 
 <style scoped>
@@ -213,5 +255,45 @@ onMounted(async () => {
   line-height: var(--time-font-height);
   text-align: left;
   color: #8e8e8e;
+}
+
+.delete-confirm {
+  min-width: 280px;
+}
+
+.delete-confirm p {
+  font-size: 14px;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.delete-confirm-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.btn-cancel {
+  padding: 6px 16px;
+  border: none;
+  border-radius: 4px;
+  background-color: var(--hover-bgc);
+  color: var(--font-color);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.btn-confirm {
+  padding: 6px 16px;
+  border: none;
+  border-radius: 4px;
+  background-color: #e74c3c;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.btn-confirm:hover {
+  background-color: #c0392b;
 }
 </style>

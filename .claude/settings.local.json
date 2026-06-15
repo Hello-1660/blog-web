@@ -4,7 +4,8 @@
       "Bash(npm install *)",
       "Bash(pnpm add *)",
       "Bash(reg query *)",
-      "Bash(npx vue-tsc *)"
+      "Bash(npx vue-tsc *)",
+      "Bash(mvn compile *)"
     ]
   }
 }
