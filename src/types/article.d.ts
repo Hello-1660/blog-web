@@ -76,6 +76,8 @@ export type ArticleSearchDto = {
     pageNum: number;
     // 每页文章数量
     pageSize: number;
+    // 文章类型
+    status: number;
 }
 
 /**

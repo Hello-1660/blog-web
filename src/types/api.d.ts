@@ -11,6 +11,16 @@ export type Result<T> = {
 }
 
 /**
+ * 分页结果
+ */
+export type PageResult<T> = {
+  // 数据列表
+  data: T[];
+  // 总条数
+  total: number;
+}
+
+/**
  * 返回结果回调函数
  */
 export type ResultCallBackFunction = {

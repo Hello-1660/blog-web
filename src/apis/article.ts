@@ -1,5 +1,5 @@
-import type { ArticleVo, HotArticleVo, ArticleDto, ArticleUpdateDto } from '@/types/article'
-import type { Result } from '@/types/api'
+import type { ArticleVo, HotArticleVo, ArticleDto, ArticleUpdateDto, ArticleSearchDto, ArticleSearchVo } from '@/types/article'
+import type { Result, PageResult } from '@/types/api'
 import http from '@/utils/http'
 
 const BASE_URL = '/article'
@@ -46,4 +46,13 @@ export function updateArticle(article: ArticleUpdateDto): Promise<Result<string>
  */
 export function deleteArticle(articleId: number): Promise<Result<void>> {
   return http.delete(`${BASE_URL}/delete`, { params: { articleId } })
+}
+
+/**
+ * 搜索文章
+ * @param params 搜索参数
+ * @returns 文章搜索结果分页
+ */
+export function searchArticle(params: ArticleSearchDto): Promise<Result<PageResult<ArticleSearchVo>>> {
+  return http.post(`${BASE_URL}/search`, params)
 }
