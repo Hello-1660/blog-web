@@ -5,11 +5,13 @@ import type { ArticleVo } from '@/types/article'
 import { getArticleById } from '@/apis/article'
 import { formatDate } from '@/utils/date'
 import ActionBar from './ActionBar.vue'
-
+import CommentBox from './CommentBox.vue'
 // 路由
 const router = useRouter()
 // 文章
 const article = ref<ArticleVo>()
+// 是否打开评论区
+const showComment = ref(false)
 
 onMounted(async () => {
   if (router.currentRoute.value.params.id) {
@@ -23,7 +25,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="article-view-container" v-if="article">
+  <div class="article-view-container" v-if="article" :class="{ 'article-view-container-open-comment' : showComment }">
     <h1 class="article-view-title">{{ article.title }}</h1>
     <div class="article-view-author">
       <div class="article-view-user-icon">
@@ -37,8 +39,15 @@ onMounted(async () => {
 
     <div class="article-view-body" v-html="article.content">
     </div>
-    <ActionBar :articleId="article.id" :initialLiked="article.isLiked" />
   </div>
+
+  <ActionBar v-if="article"
+    :articleId="article.id" 
+    :initialLiked="article.isLiked" 
+    @open-comment="showComment = $event"
+    :class="{ 'action-bar-open-comment' : showComment }"
+  />
+  <CommentBox :class="{ 'comment-open' : showComment }"/>
 </template>
 
 <style scoped>
@@ -48,6 +57,21 @@ onMounted(async () => {
   padding: 30px 20px;
   background-color: var(--show-bgc);
   color: var(--font-color);
+  margin-top: 30px;
+  transition: transform 0.3s ease;
+}
+
+.article-view-container-open-comment {
+  transform: translateX(-180px);
+  width: calc(100% - 100px);
+}
+
+.action-bar-open-comment {
+  transform: translateX(-280px);
+}
+
+.comment-open {
+  transform: translateX(-415px);
 }
 
 .article-view-title {

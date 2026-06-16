@@ -48,27 +48,12 @@ const userInfoData = ref<UserUpdateDto>(new UserUpdateDtoObj())
 const themeList = ref<Theme[]>([
   {
     id: 0,
-    name: '默认主题',
+    name: '亮色主题',
     status: 1
   },
   {
     id: 2,
     name: '深色主题',
-    status: 1
-  },
-  {
-    id: 3,
-    name: '蓝色主题',
-    status: 1
-  },
-  {
-    id: 4,
-    name: '粉色主题',
-    status: 1
-  },
-  {
-    id: 5,
-    name: '紫色主题',
     status: 1
   }
 ])
@@ -286,6 +271,7 @@ onUnmounted(() => {
 <style scoped>
 .user-update-container {
   padding: 40px 30px;
+  margin: 40px 0 0 0;
   background-color: var(--show-bgc);
 }
 

@@ -453,7 +453,7 @@ onUnmounted(() => {
           </label>
           <input type="file" id="article-edit-option-item-file" style="display: none;" @change="handleInsertImg">
         </div>
-      </div>
+    </div>
 
     <div class="article-edit-title">
       <input class="article-edit-title-input" type="text" placeholder="请输入文章标题" 
@@ -522,8 +522,8 @@ onUnmounted(() => {
   width: 100%;
   background-color: var(--show-bgc);
   padding: 50px 50px 100px 50px;
-  min-height: calc(100% - 60px);
-  margin-top: 60px;
+  min-height: calc(100% - 70px);
+  margin-top: 70px;
 }
 
 .article-edit-title {
@@ -550,7 +550,7 @@ onUnmounted(() => {
 
 .article-edit-option {
   position: fixed;
-  top: 50px;
+  top: 70px;
   left: 0px;
   z-index: 100;
   display: flex;

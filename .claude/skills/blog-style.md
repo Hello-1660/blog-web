@@ -116,3 +116,6 @@ showTopTip.error('操作失败')
 - 禁止引入组件库 (Element Plus, Ant Design 等)
 - 禁止使用 CSS 预处理器
 - 禁止使用 `export default` 在组件中 (仅工具模块可用)
+
+## 后端接口路径
+- E:\project\java\blog

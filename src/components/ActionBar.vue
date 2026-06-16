@@ -11,6 +11,8 @@ const props = defineProps<{
 
 const isLiked = ref(props.initialLiked || false)
 const showFavorite = ref(false)
+const showComment = ref(false)
+const emit = defineEmits(['open-comment'])
 
 async function handleLike() {
   try {
@@ -24,6 +26,8 @@ async function handleLike() {
 
 function handleComment() {
   // 预留评论功能
+  showComment.value = !showComment.value
+  emit('open-comment', showComment.value)
 }
 
 function handleBookmark() {
@@ -62,7 +66,7 @@ function handleBookmark() {
 .action-bar {
   position: fixed;
   top: 50%;
-  right: 100px;
+  right: 150px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -71,6 +75,7 @@ function handleBookmark() {
   border: 2px solid #000;
   border-radius: 12px;
   overflow: hidden;
+  transition: transform 0.25s ease;
 }
 
 .action-item {
