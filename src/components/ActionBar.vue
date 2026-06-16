@@ -62,13 +62,15 @@ function handleBookmark() {
 .action-bar {
   position: fixed;
   top: 50%;
-  right: 40px;
-  transform: translateY(-50%);
+  right: 100px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 24px;
   z-index: 100;
+  border: 2px solid #000;
+  border-radius: 12px;
+  overflow: hidden;
 }
 
 .action-item {

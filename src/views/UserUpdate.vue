@@ -184,12 +184,12 @@ onMounted(() => {
   // 获取用户信息
   if (!userStore.isLogin) router.push('/')
   if (userStore.userInfo) {
-    userInfoData.value.nickname = userStore.userInfo.nickname
-    userInfoData.value.icon = userStore.userInfo.icon
-    userInfoData.value.email = userStore.userInfo.email
-    userInfoData.value.description = userStore.userInfo.description
-    userInfoData.value.themeId = userStore.userInfo.themeId
-    userInfoData.value.likeShowStatus = userStore.userInfo.likeShowStatus
+    userInfoData.value.nickname = userStore.userInfo.nickname || ''
+    userInfoData.value.icon = userStore.userInfo.icon || ''
+    userInfoData.value.email = userStore.userInfo.email || ''
+    userInfoData.value.description = userStore.userInfo.description || ''
+    userInfoData.value.themeId = userStore.userInfo.themeId ?? -1
+    userInfoData.value.likeShowStatus = userStore.userInfo.likeShowStatus ?? -1
   }
 
   // 添加点击外部监听

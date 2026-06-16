@@ -10,3 +10,13 @@ export function refreshToken(refreshToken: string): Promise<Result<{ token: stri
     headers: { Authorization: `Bearer ${refreshToken}` }
   })
 }
+
+/**
+ * 用户登出
+ * @returns 无 
+ */
+export function logout(): Promise<Result<void>> {
+  return http.post('/token/logout', null, {
+    headers: { Authorization: `Bearer ${refreshToken}` }
+  })
+}
