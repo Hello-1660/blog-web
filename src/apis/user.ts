@@ -1,4 +1,12 @@
-import type { UserInfo, UserLogin, UserLoginDto, UserRegisterDto, UserUpdateDto, UserVo } from '@/types/user'
+import type { 
+  UserInfo, 
+  UserLogin, 
+  UserLoginDto, 
+  UserRegisterDto, 
+  UserUpdateDto, 
+  UserVo,
+  UserMsgVo 
+} from '@/types/user'
 import type { Article, UserLikeArticle } from '@/types/article'
 import type { Result } from '@/types/api'
 import http from '@/utils/http'
@@ -72,4 +80,17 @@ export function likeArticle(articleId: number): Promise<Result<void>> {
  */
 export function getRegisterVerificationCode(email: string): Promise<Result<String>> {
   return http.get(`${BASE_URL}/verificationCode/${email}`)
+}
+
+/**
+ * 获取用户互动信息
+ * @param id 用户编号
+ * @returns 用户互动信息
+ */
+export function getUserMsg(id?: number): Promise<Result<UserMsgVo>> {
+  if (id) {
+    return http.get(`${BASE_URL}/userMsg/${id}`)
+  } else {
+    return http.get(`${BASE_URL}/userMsg`)
+  }
 }

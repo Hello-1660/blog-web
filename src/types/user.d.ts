@@ -117,3 +117,27 @@ export type UserVo = {
   // 用户喜欢列表展示状态
   likeShowStatus: number;
 }
+
+/**
+ * 用户身份
+ */
+export type UserIdentifyVo = {
+  // 身份名称
+  name: string;
+  // 身份描述
+  description: string;
+  // 身份类型值
+  typeValue: string;
+}
+
+/**
+ * 用户互动信息
+ */
+export type UserMsgVo = {
+  // 用户粉丝数量
+  fansNum: number;
+  // 用户关注数量
+  subscribeNum: number;
+  // 用户账号身份信息
+  userIdentifyVo: UserIdentifyVo;
+}

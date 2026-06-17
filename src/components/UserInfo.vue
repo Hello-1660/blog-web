@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
+import { getUserMsg } from '@/apis/user'
+import type { UserMsgVo } from '@/types/user'
+import { resultPostProcessor } from '@/utils/result' 
 
 // 路由
 const router = useRouter()
@@ -9,6 +12,7 @@ const router = useRouter()
 // 用户信息
 const userStore = useUserStore()
 const userInfo = ref(userStore.userInfo)
+const userMsg = ref<UserMsgVo>()
 
 const computedUserInfo = computed(() => {
   return {
@@ -26,6 +30,17 @@ const computedUserInfo = computed(() => {
 const handleUserUpdate = () => {
   router.push('/user/update')
 }
+
+onMounted(async () => {
+  if (userStore.isLogin) {
+    const data = await getUserMsg()
+    resultPostProcessor(data, {
+      success: () => {
+        userMsg.value = data.data
+      }
+    })
+  }
+}) 
 </script>
 
 <template>
@@ -37,11 +52,17 @@ const handleUserUpdate = () => {
 
       <div class="user-account">
         <div class="user-name">{{ computedUserInfo.nickname }}</div>
-        <div class="user-line">
-          <div>关注<span>{{ 2 }}</span></div>
-          <div>粉丝<span>{{ 3 }}</span></div>
+        <div class="user-identify" v-if="userMsg?.userIdentifyVo" v-alt="userMsg.userIdentifyVo.description">
+          <svg v-if="userMsg.userIdentifyVo.typeValue === '蓝标'" t="1781680214396" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="15616" width="200" height="200"><path d="M228.817 256.652h563.945v563.944H228.817z" fill="#FFFFFF" p-id="15617"></path><path d="M955.392 630.69v137.124l-119.156 68.329L768 955.206H631.343l-119.064 68.329-118.504-68.33H256.652l-68.608-119.062-119.157-68.33V630.692L0.372 512l68.33-118.69V256.185l119.155-68.7 68.33-118.599h137.122L512.186 0l118.97 68.887H768l68.329 118.598 119.063 68.701V393.31L1023.721 512l-68.329 118.69z m-189.44-315.577h-170.17v36.864c0 10.891 5.213 17.5 15.64 19.735l3.164 0.652 6.703 1.675 10.24 2.607-90.392 235.147c-7.26 18.619-13.125 39.843-17.966 64.047a696.785 696.785 0 0 0-9.31-34.257 400.756 400.756 0 0 0-10.24-29.79l-90.67-235.333c3.724-0.745 7.075-1.77 10.054-2.42l6.516-1.583 3.166-0.652c10.333-2.234 15.639-8.75 15.639-19.642v-36.957H278.342v36.957c0 10.892 5.213 17.408 15.64 19.642l4.002 0.652 9.123 1.582 18.06 3.258 158.906 392.844h76.52l158.72-392.844 17.874-3.258c4.468-0.744 7.54-1.21 9.123-1.582l3.817-0.652c10.612-2.234 15.825-8.75 15.732-19.642l0.186-37.143z" fill="#08A5FA" p-id="15618"></path></svg>
+          <svg v-if="userMsg.userIdentifyVo.typeValue === '黄标'" t="1781680273033" class="icon" style="transform:scale(1.09);" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="16835" width="200" height="200"><path d="M252.416 277.930667h516.949333v516.949333H252.416z" fill="#FFFFFF" p-id="16836"></path><path d="M918.442667 620.8v125.696l-109.226667 62.634667-62.549333 109.141333H621.397333l-109.141333 62.634667-108.629333-62.634667H277.930667L215.04 809.130667 105.813333 746.496V620.8L43.008 512l62.634667-108.8V277.504l109.226666-62.976 62.805334-108.8h125.696L512.170667 42.666667l109.056 63.146666h125.44l62.634666 108.714667 109.141334 62.976v125.696L981.077333 512l-62.634666 108.8z m-173.653334-289.28H588.8v33.792c0 9.984 4.778667 16.042667 14.336 18.090667l2.816 0.597333 6.144 1.536 9.386667 2.389333-82.858667 215.552c-6.656 17.066667-12.032 36.522667-16.469333 58.709334a638.72 638.72 0 0 0-8.533334-31.402667 367.36 367.36 0 0 0-9.386666-27.306667l-83.114667-215.722666c3.413333-0.682667 6.485333-1.621333 9.216-2.218667l5.973333-1.450667 2.901334-0.597333c9.472-2.048 14.336-8.021333 14.336-18.005333v-33.877334H297.813333v33.877334c0 9.984 4.778667 15.957333 14.336 18.005333l3.669334 0.597333 8.362666 1.450667 16.554667 2.986667L486.4 748.629333h70.144l145.493333-360.106666 16.384-2.986667c4.096-0.682667 6.912-1.109333 8.362667-1.450667l3.498667-0.597333c9.728-2.048 14.506667-8.021333 14.421333-18.005333l0.170667-34.048z" fill="#FACA08" p-id="16837"></path></svg>
+          <span>{{ userMsg.userIdentifyVo.name }}</span>
         </div>
-        <div class="user-email">{{ computedUserInfo.email }}</div>
+        <div>
+          <div class="user-line">
+            <div>关注<span>{{ userMsg?.subscribeNum || 0 }}</span></div>
+            <div>粉丝<span>{{ userMsg?.fansNum || 0 }}</span></div>
+          </div>  
+        </div>
         <div class="user-description">{{ computedUserInfo.description }}</div>
       </div>
     </div>
@@ -78,7 +99,6 @@ const handleUserUpdate = () => {
   width: 200px !important;
   height: 200px !important;
   border-radius: 50%; 
-  /* background: pink !important; */
 }
 
 .user-icon>img {
@@ -100,6 +120,21 @@ const handleUserUpdate = () => {
   font-weight: 200; 
   margin-bottom: 10px;
   user-select: none;
+}
+
+.user-identify {
+  display: flex;
+  justify-self: start;
+  align-items: center;
+  height: 20px;
+  margin-bottom: 10px;
+  user-select: none;
+}
+
+.user-identify > span {
+  height: 100%;
+  line-height: 18px;
+  margin-left: 5px;
 }
 
 .user-line {
