@@ -3,13 +3,19 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import type { ArticleVo } from '@/types/article'
 import { getArticleById } from '@/apis/article'
+import { getCommonList } from '@/apis/comment.ts'
 import { formatDate } from '@/utils/date'
 import ActionBar from './ActionBar.vue'
 import CommentBox from './CommentBox.vue'
+import { resultPostProcessor } from '@/utils/result.ts'
+import type { CommentWithUserVo } from '@/types/comment.js'
+
 // 路由
 const router = useRouter()
 // 文章
 const article = ref<ArticleVo>()
+// 评论
+const commentList = ref<CommentWithUserVo[]>()
 // 是否打开评论区
 const showComment = ref(false)
 
@@ -18,8 +24,17 @@ onMounted(async () => {
     const id = parseInt(router.currentRoute.value.params.id as string, 10)
     if (isNaN(id)) router.push('/')
 
+    // 获取文章数据
     const data = await getArticleById(id)
-    article.value = data.data
+    resultPostProcessor(data, {
+      success: () => article.value = data.data
+    })
+
+    // 获取评论数据
+    const commmentData = await getCommonList(id);
+    resultPostProcessor(commmentData, {
+      success: () => commentList.value = commmentData.data
+    })
   }
 })
 </script>
@@ -47,7 +62,11 @@ onMounted(async () => {
     @open-comment="showComment = $event"
     :class="{ 'action-bar-open-comment' : showComment }"
   />
-  <CommentBox :class="{ 'comment-open' : showComment }"/>
+  <CommentBox v-if="article && commentList"
+  :class="{ 'comment-open' : showComment }"
+  :data="commentList"
+  :user-id="article?.userId"
+  />
 </template>
 
 <style scoped>

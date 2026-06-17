@@ -112,13 +112,16 @@ onMounted(async () => {
   margin-left: 50px;
 }
 
+.user-account > div {
+  margin-bottom: 15px;
+}
+
 .user-name {
   font-size: 40px;
   font-weight: 400;
   color: #333;
   font-family: 'LocalSerif' !important;
   font-weight: 200; 
-  margin-bottom: 10px;
   user-select: none;
 }
 
@@ -127,7 +130,6 @@ onMounted(async () => {
   justify-self: start;
   align-items: center;
   height: 20px;
-  margin-bottom: 10px;
   user-select: none;
 }
 
@@ -140,7 +142,6 @@ onMounted(async () => {
 .user-line {
   display: flex;
   justify-content: start;
-  margin-bottom: 10px;
 }
 
 .user-line>div {

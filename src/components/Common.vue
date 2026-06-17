@@ -95,6 +95,7 @@ const deleteUserData = async () => {
         <img :src="user?.icon" alt="">
         <div class="common-user-option" v-show="showUserOption">
           <div @click.stop="handleLogout">退出登录</div>
+          <div>邮箱</div>
         </div>
       </div>
     </div>
