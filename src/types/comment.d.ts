@@ -13,7 +13,7 @@ export type CommentWithUserVo = {
   // 评论文章编号
   articleId: string;
   // 父评论编号
-  fId: number;
+  fid: number;
   // 评论内容
   content: string;
   // 评论排序
@@ -26,6 +26,10 @@ export type CommentWithUserVo = {
  * 用户评论层级
  */
 export type CommentLevel = {
-  data: CommentWithUserVo
-  chlidList: CommentWithUserVo[]
+  // 评论
+  data: CommentWithUserVo;
+  // 子评论
+  chlidList: CommentWithUserVo[];
+  // 是否展开评论
+  isShow: boolean
 }
