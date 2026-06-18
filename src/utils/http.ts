@@ -96,6 +96,8 @@ http.interceptors.response.use(
  * 无感刷新 token 并重试原请求
  */
 async function handleRefreshAndRetry(config: InternalAxiosRequestConfig) {
+  const userStore = useUserStore()
+
   if (!refreshTokenStr) {
     handleLogout()
     return Promise.reject(new Error('缺少 refresh token'))
@@ -120,6 +122,7 @@ async function handleRefreshAndRetry(config: InternalAxiosRequestConfig) {
       const newToken = data.token
       if (newToken) {
         accessToken = newToken
+        userStore.setToken(newToken)
       }
 
       // 重试排队的请求

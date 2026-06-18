@@ -1,4 +1,4 @@
-import type { ArticleVo, HotArticleVo, ArticleDto, ArticleUpdateDto, ArticleSearchDto, ArticleSearchVo } from '@/types/article'
+import type { ArticleVo, HotArticleVo, ArticleDto, ArticleUpdateDto, ArticleSearchDto, ArticleSearchVo, ArticleMsgVo } from '@/types/article'
 import type { Result, PageResult } from '@/types/api'
 import http from '@/utils/http'
 
@@ -55,4 +55,13 @@ export function deleteArticle(articleId: number): Promise<Result<void>> {
  */
 export function searchArticle(params: ArticleSearchDto): Promise<Result<PageResult<ArticleSearchVo>>> {
   return http.post(`${BASE_URL}/search`, params)
+}
+
+/**
+ * 获取文章信息
+ * @param id 文章编号
+ * @returns 文章信息
+ */
+export function getArticleMsg(id: number): Promise<Result<ArticleMsgVo>> {
+  return http.get(`${BASE_URL}/articleMsg/${id}`)
 }

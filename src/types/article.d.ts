@@ -128,6 +128,18 @@ export type ArticleVo = Article & {
     userNickname: string;
     // 文章作者头像
     userIcon: string;
-    // 当前用户是否已点赞
-    isLiked: boolean;
+}
+
+/**
+ * 文章交互信息
+ */
+export type ArticleMsgVo = {
+    // 用户是否点赞
+    liked: boolean;
+    // 点赞数
+    likedNum: number;
+    // 评论数
+    commentNum: number;
+    // 用户添加进收藏夹编号列表
+    favoriteIdList: number[];
 }

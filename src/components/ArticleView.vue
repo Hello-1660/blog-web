@@ -58,7 +58,6 @@ onMounted(async () => {
 
   <ActionBar v-if="article"
     :articleId="article.id" 
-    :initialLiked="article.isLiked" 
     @open-comment="showComment = $event"
     :class="{ 'action-bar-open-comment' : showComment }"
   />

@@ -20,6 +20,10 @@ export type CommentWithUserVo = {
   sort: number;
   // 评论创建时间
   createTime: string;
+  // 评论点赞数
+  likeNum: number;
+  // 用户是否点赞过评论
+  isLiked: boolean;
 }
 
 /**
