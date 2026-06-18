@@ -31,3 +31,12 @@ export function allRead(): Promise<Result<void>> {
 export function deleteEmails(ids: number[]): Promise<Result<void>> {
   return http.post(`${BASE_URL}/delete`, ids)
 }
+
+/**
+ * 推送粉丝文章
+ * @param id 文章编号
+ * @returns 无
+ */
+export function sendFans(id: number): Promise<Result<void>> {
+  return http.get(`${BASE_URL}/massSendFans/${id}`)
+}

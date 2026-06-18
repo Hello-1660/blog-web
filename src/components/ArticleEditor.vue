@@ -2,6 +2,7 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { getArticleById, saveArticle, updateArticle } from '@/apis/article'
+import { sendFans } from '@/apis/email'
 import type { ArticleDto } from '@/types/article'
 import EditorBox from './EditorBox.vue'
 import SelectList from './SelectList.vue'
@@ -309,7 +310,10 @@ const handleSubmitArticle = async (type: 0 | 1) => {
   if (isNew.value === true) {
     const data = await saveArticle(article.value)
     resultPostProcessor(data, {
-      success: () => showTopTip(data.message),
+      success: () => {
+        showTopTip(data.message)
+        if (type === 1 && data.data) sendFans(data.data)
+      },
       failed: () => showTopTip({
         type: 'error',
         message: data.message,
@@ -327,7 +331,10 @@ const handleSubmitArticle = async (type: 0 | 1) => {
       categoryId: article.value.categoryId,
     })
     resultPostProcessor(data, {
-      success: () => showTopTip(data.message),
+      success: () => {
+        showTopTip(data.message)
+        if (type === 1) sendFans(prop.id!)
+      },
       failed: () => showTopTip({
         type: 'error',
         message: data.message,
@@ -496,14 +503,6 @@ onUnmounted(() => {
         <SwitchButton
         :status="!!article.sort"
         @switch-status="handleArticleSort"
-        ></SwitchButton>
-      </div>
-
-      <div class="article-edit-message-status article-edit-message-item">
-        <div>保存类型：</div>
-        <SwitchButton
-        :status="!!article.status"
-        @switch-status="handleArticleStatus"
         ></SwitchButton>
       </div>
 

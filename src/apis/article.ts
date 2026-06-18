@@ -26,7 +26,7 @@ export function getArticleById(id: number): Promise<Result<ArticleVo>> {
  * @param article 文章信息 
  * @returns 无
  */
-export function saveArticle(article: ArticleDto): Promise<Result<string>> {
+export function saveArticle(article: ArticleDto): Promise<Result<number>> {
   return http.post(`${BASE_URL}/save`, article)
 }
 
