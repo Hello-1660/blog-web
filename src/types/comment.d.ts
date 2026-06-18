@@ -37,3 +37,17 @@ export type CommentLevel = {
   // 是否展开评论
   isShow: boolean
 }
+
+/**
+ * 用户评论dto
+ */
+export type CommentDto = {
+  // 评论用户编号
+  userId: number;
+  // 评论文章编号
+  articleId: number;
+  // 父评论编号
+  fid: number | null;
+  // 评论内容
+  content: string;
+}

@@ -98,25 +98,6 @@ function onClose() {
   <Modal :visible="visible" title="收藏到" @close="onClose">
     <div class="favorite-selector">
       <div class="favorite-list" v-if="favorites.length > 0">
-        <!-- 已收藏 -->
-        <template v-if="addedFavorites.length > 0">
-          <div class="favorite-section-title">已收藏</div>
-          <div
-            v-for="item in addedFavorites"
-            :key="item.id"
-            class="favorite-item favorite-item--added"
-            @click="handleRemove(item)"
-          >
-            <div class="favorite-item-icon favorite-item-icon--added">
-              <svg t="1" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="18" height="18">
-                <path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64z m193.5 150.9l-262 262L341 374.5c-12.4-12.4-32.4-12.4-44.8 0-12.4 12.4-12.4 32.4 0 44.8l124.8 124.8c12.4 12.4 32.4 12.4 44.8 0l284.4-284.4c12.4-12.4 12.4-32.4 0-44.8-12.4-12.4-32.4-12.4-44.8 0z" fill="#67c23a"/>
-              </svg>
-            </div>
-            <span class="favorite-item-name">{{ item.name }}</span>
-            <span class="favorite-item-status">{{ item.status === 1 ? '公开' : '私有' }}</span>
-          </div>
-        </template>
-
         <!-- 其他收藏夹 -->
         <template v-if="otherFavorites.length > 0">
           <div class="favorite-section-title">{{ addedFavorites.length > 0 ? '其他收藏夹' : '收藏夹' }}</div>
@@ -127,6 +108,25 @@ function onClose() {
             @click="handleSelect(item)"
           >
             <div class="favorite-item-icon">
+              <svg t="1" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="18" height="18">
+                <path d="M256 128h512a85.333333 85.333333 0 0 1 85.333333 85.333333v682.666667a42.666667 42.666667 0 0 1-64.426666 37.973333L512 765.184l-276.906667 168.789333A42.666667 42.666667 0 0 1 170.666667 896V213.333333a85.333333 85.333333 0 0 1 85.333333-85.333333z" fill="currentColor"></path>
+              </svg>
+            </div>
+            <span class="favorite-item-name">{{ item.name }}</span>
+            <span class="favorite-item-status">{{ item.status === 1 ? '公开' : '私有' }}</span>
+          </div>
+        </template>
+
+        <!-- 已收藏 -->
+        <template v-if="addedFavorites.length > 0">
+          <div class="favorite-section-title">已收藏</div>
+          <div
+            v-for="item in addedFavorites"
+            :key="item.id"
+            class="favorite-item favorite-item--added"
+            @click="handleRemove(item)"
+          >
+            <div class="favorite-item-icon favorite-item-icon--added">
               <svg t="1" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="18" height="18">
                 <path d="M256 128h512a85.333333 85.333333 0 0 1 85.333333 85.333333v682.666667a42.666667 42.666667 0 0 1-64.426666 37.973333L512 765.184l-276.906667 168.789333A42.666667 42.666667 0 0 1 170.666667 896V213.333333a85.333333 85.333333 0 0 1 85.333333-85.333333z" fill="currentColor"></path>
               </svg>
@@ -200,7 +200,7 @@ function onClose() {
 }
 
 .favorite-item-icon--added {
-  color: #67c23a;
+  color: #fcb720;
 }
 
 .favorite-item-name {

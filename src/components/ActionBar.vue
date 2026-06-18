@@ -73,14 +73,18 @@ function handleBookmark() {
       <span class="action-label">评论{{ articleMsg?.commentNum }}</span>
     </div>
 
-    <div class="action-item" :class="{ 'action-item--active': isBookmarked }" @click="handleBookmark">
+    <div class="action-item" :class="{ 'action-item-favority-active': isBookmarked }" @click="handleBookmark">
       <svg t="1" class="action-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="22" height="22">
         <path d="M256 128h512a85.333333 85.333333 0 0 1 85.333333 85.333333v682.666667a42.666667 42.666667 0 0 1-64.426666 37.973333L512 765.184l-276.906667 168.789333A42.666667 42.666667 0 0 1 170.666667 896V213.333333a85.333333 85.333333 0 0 1 85.333333-85.333333z" fill="currentColor"></path>
       </svg>
       <span class="action-label">收藏</span>
     </div>
 
-    <FavoriteSelector :visible="showFavorite" :articleId="articleId" :favoriteIdList="articleMsg?.favoriteIdList || []" @close="showFavorite = false; fetchArticleMsg()" />
+    <FavoriteSelector 
+    :visible="showFavorite" 
+    :articleId="articleId" 
+    :favoriteIdList="articleMsg?.favoriteIdList || []" 
+    @close="showFavorite = false; fetchArticleMsg()" />
   </div>
 </template>
 
@@ -123,6 +127,14 @@ function handleBookmark() {
 
 .action-item--active:hover {
   color: #ff4d4f;
+}
+
+.action-item-favority-active {
+  color: #fcb720;
+}
+
+.action-item-favority-active:hover {
+  color: #fcb720;
 }
 
 .action-icon {

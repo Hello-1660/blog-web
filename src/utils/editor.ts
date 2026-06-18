@@ -15,7 +15,7 @@ export class EditorStyle {
  * @param html html 字符串
  * @returns  去除标签后的字符串
  */
-export function stripHtml(html: string): string {
+export function stripHtml(html: string | undefined): string {
   if (!html) return ''
   return html.replace(/<[^>]*>/g, '')
 }
