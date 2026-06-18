@@ -1,14 +1,15 @@
-import type { 
-  UserInfo, 
-  UserLogin, 
-  UserLoginDto, 
-  UserRegisterDto, 
-  UserUpdateDto, 
+import type {
+  UserInfo,
+  UserLogin,
+  UserLoginDto,
+  UserRegisterDto,
+  UserUpdateDto,
   UserVo,
-  UserMsgVo 
+  UserMsgVo,
+  SubscribeVo
 } from '@/types/user'
 import type { Article, UserLikeArticle } from '@/types/article'
-import type { Result } from '@/types/api'
+import type { PageResult, Result } from '@/types/api'
 import http from '@/utils/http'
 
 const BASE_URL = '/user'
@@ -102,4 +103,63 @@ export function getUserMsg(id?: number): Promise<Result<UserMsgVo>> {
  */
 export function userBrowse(id: number): Promise<Result<void>> {
   return http.post(`${BASE_URL}/browse`, null, { params: { articleId: id } } )
+}
+
+/**
+ * 获取用户浏览记录
+ */
+export function getBrowseHistory(pageNum: number, pageSize: number): Promise<Result<PageResult<Article>>> {
+  return http.post(`${BASE_URL}/history`, { pageNum, pageSize })
+}
+
+/**
+ * 批量删除浏览记录
+ */
+export function deleteBrowseHistory(ids: number[]): Promise<Result<void>> {
+  return http.post(`${BASE_URL}/historyDel`, ids)
+}
+
+/**
+ * 获取指定用户信息
+ */
+export function getUserById(id: number): Promise<Result<UserVo>> {
+  return http.get(`${BASE_URL}/detail/${id}`)
+}
+
+/**
+ * 获取指定用户的文章列表
+ */
+export function getUserArticlesById(id: number): Promise<Result<Article[]>> {
+  return http.get(`${BASE_URL}/articleList/${id}`)
+}
+
+/**
+ * 获取指定用户的喜欢列表
+ */
+export function getUserLikeListById(id: number): Promise<Result<UserLikeArticle[]>> {
+  return http.get(`${BASE_URL}/likeList/${id}`)
+}
+
+/**
+ * 关注/取关用户
+ */
+export function subscribeUser(subUserId: number): Promise<Result<void>> {
+  return http.post(`${BASE_URL}/subscribe`, null, { params: { subUserId } })
+}
+
+/**
+ * 获取关注列表
+ */
+export function getSubscribeList(id?: number): Promise<Result<SubscribeVo[]>> {
+  if (id) {
+    return http.get(`${BASE_URL}/subscribeList/${id}`)
+  }
+  return http.get(`${BASE_URL}/subscribeList`)
+}
+
+/**
+ * 获取粉丝列表
+ */
+export function getFansList(): Promise<Result<SubscribeVo[]>> {
+  return http.get(`${BASE_URL}/fansList`)
 }

@@ -65,10 +65,23 @@ const handleSearch = () => {
 }
 
 /**
+ * 查看邮箱
+ */
+const handleShowEmail = () => {
+  router.push('/email')
+}
+
+/**
+ * 浏览记录
+ */
+const handleShowHistory = () => {
+  router.push('/history')
+}
+
+/**
  * 用户登出
  */
 const handleLogout = () => {
-
   showLogoutModal.value = true
 }
 
@@ -121,7 +134,8 @@ const deleteUserData = async () => {
         <img :src="user?.icon" alt="">
         <div class="common-user-option" v-show="showUserOption">
           <div @click.stop="handleLogout">退出登录</div>
-          <div>邮箱</div>
+          <div @click.stop="handleShowEmail">邮箱</div>
+          <div @click.stop="handleShowHistory">浏览记录</div>
         </div>
       </div>
     </div>

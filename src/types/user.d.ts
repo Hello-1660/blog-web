@@ -141,3 +141,15 @@ export type UserMsgVo = {
   // 用户账号身份信息
   userIdentifyVo: UserIdentifyVo;
 }
+
+/**
+ * 关注信息
+ */
+export type SubscribeVo = {
+  id: number;
+  subUserId: number;
+  nickname: string;
+  icon: string;
+  sort: number;
+  createTime: string;
+}

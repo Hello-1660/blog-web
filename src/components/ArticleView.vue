@@ -37,11 +37,11 @@ onMounted(async () => {
   <div class="article-view-container" v-if="article" :class="{ 'article-view-container-open-comment' : showComment }">
     <h1 class="article-view-title">{{ article.title }}</h1>
     <div class="article-view-author">
-      <div class="article-view-user-icon">
+      <div class="article-view-user-icon" @click="router.push(`/user/${article.userId}`)">
         <img :src="article.userIcon">
       </div>
       <div class="article-view-user">
-        <div class="article-view-username">{{ article.userNickname }}</div>
+        <div class="article-view-username" @click="router.push(`/user/${article.userId}`)">{{ article.userNickname }}</div>
         <div class="article-create-time">{{ formatDate(article.createTime) }}</div>
       </div>
     </div>
@@ -114,7 +114,8 @@ onMounted(async () => {
   width: 40px;
   height: 40px;
   background-color: yellow;
-  border-radius: 50%; 
+  border-radius: 50%;
+  cursor: pointer;
 }
 
 .article-view-user-icon>img {
@@ -130,6 +131,11 @@ onMounted(async () => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.article-view-username:hover {
+  text-decoration: underline;
 }
 
 .article-create-time {

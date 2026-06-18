@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import type { Favorite } from '@/types/favorite'
 import { getFavoriteList, deleteFavorite, removeArticleFromFavorite, removeAllArticlesFromFavorite } from '@/apis/favorite'
 import { formatDate } from '@/utils/date'
@@ -9,21 +9,23 @@ import EditFavoriteModal from '@/components/EditFavoriteModal.vue'
 import FavoriteArticles from '@/components/FavoriteArticles.vue'
 import Modal from '@/components/Modal.vue'
 
+const porp = defineProps<{ userId?: number }>()
+const isOwner = computed(() => !porp.userId)
+
 const favoriteList = ref<Favorite[]>([])
 const showEditModal = ref(false)
 const editingFavorite = ref<Favorite | null>(null)
 const selectedFavorite = ref<Favorite | null>(null)
 const articlesRefreshKey = ref(0)
-// 删除确认弹窗
 const showDeleteModal = ref(false)
 const deleteTarget = ref<Favorite | null>(null)
 
-onMounted(async () => {
-  await fetchList()
-})
+onMounted(async () => { await fetchList() })
 
 async function fetchList() {
-  const data = await getFavoriteList()
+  const data = porp.userId
+    ? await getFavoriteList(porp.userId)
+    : await getFavoriteList()
   favoriteList.value = data.data || []
 }
 
@@ -51,17 +53,21 @@ async function handleConfirmDelete() {
   if (!deleteTarget.value) return
   try {
     await deleteFavorite(deleteTarget.value.id)
-    showTopTip.success(`收藏夹「${deleteTarget.value.name}」已删除`)
+    showTopTip({ type: 'success', message: `收藏夹「${deleteTarget.value.name}」已删除` })
     showDeleteModal.value = false
     deleteTarget.value = null
     await fetchList()
+    if (selectedFavorite.value?.id === deleteTarget.value?.id) {
+      selectedFavorite.value = null
+    }
   } catch {
-    showTopTip.error('删除失败')
+    showTopTip({ type: 'error', message: '删除失败' })
   }
 }
 
 function handleViewFavorite(fav: Favorite) {
   selectedFavorite.value = fav
+  articlesRefreshKey.value++
 }
 
 function handleBack() {
@@ -73,10 +79,10 @@ async function handleRemoveArticle(articleId: number) {
   if (!selectedFavorite.value) return
   try {
     await removeArticleFromFavorite(selectedFavorite.value.id, articleId)
-    showTopTip.success('已移除')
+    showTopTip({ type: 'success', message: '已移除' })
     articlesRefreshKey.value++
   } catch {
-    showTopTip.error('移除失败')
+    showTopTip({ type: 'error', message: '移除失败' })
   }
 }
 
@@ -84,22 +90,22 @@ async function handleRemoveAll() {
   if (!selectedFavorite.value) return
   try {
     await removeAllArticlesFromFavorite(selectedFavorite.value.id)
-    showTopTip.success('已清空')
+    showTopTip({ type: 'success', message: '已清空' })
     articlesRefreshKey.value++
   } catch {
-    showTopTip.error('操作失败')
+    showTopTip({ type: 'error', message: '操作失败' })
   }
 }
 
-// hover 控制 FunctionList 显示
-const handleMouseEnter = (el: MouseEvent) => {
-  const target = el.currentTarget as HTMLElement
-  target.classList.add('favorite-item-show-function')
+function handleFavoriteSaved() {
+  fetchList()
 }
 
+const handleMouseEnter = (el: MouseEvent) => {
+  (el.currentTarget as HTMLElement).classList.add('favorite-item-show-function')
+}
 const handleMouseLeave = (el: MouseEvent) => {
-  const target = el.currentTarget as HTMLElement
-  target.classList.remove('favorite-item-show-function')
+  (el.currentTarget as HTMLElement).classList.remove('favorite-item-show-function')
 }
 </script>
 
@@ -109,6 +115,7 @@ const handleMouseLeave = (el: MouseEvent) => {
       :key="articlesRefreshKey"
       :favoriteId="selectedFavorite.id"
       :favoriteName="selectedFavorite.name"
+      :is-owner="isOwner"
       @back="handleBack"
       @removeArticle="handleRemoveArticle"
       @removeAll="handleRemoveAll"
@@ -116,7 +123,7 @@ const handleMouseLeave = (el: MouseEvent) => {
   </div>
 
   <div v-else class="favorite-container">
-    <div class="favorite-add" @click="handleAdd">
+    <div v-if="isOwner" class="favorite-add" @click="handleAdd">
       <svg t="1779762682734" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="200" height="200">
         <path d="M896 480a32 32 0 0 1 32 32v384a32 32 0 0 1-32 32H512a32 32 0 1 1 0-64h352V512a32 32 0 0 1 32-32z m-128-384a32 32 0 0 1 32 32v640a32 32 0 0 1-32 32H128a32 32 0 0 1-32-32V128a32 32 0 0 1 32-32h640z m-32 64h-576v576h576v-576z m-285.952 128a32 32 0 0 1 32 32v98.048H576a32 32 0 0 1 31.488 26.24l0.512 5.76a32 32 0 0 1-32 32H482.048V576a32 32 0 0 1-26.24 31.488l-5.76 0.512a32 32 0 0 1-32-32V482.048H320a32 32 0 0 1-31.488-26.24l-0.512-5.76a32 32 0 0 1 32-32h98.048V320a32 32 0 0 1 26.24-31.488z" fill="currentColor"></path>
       </svg>
@@ -130,7 +137,7 @@ const handleMouseLeave = (el: MouseEvent) => {
       @mouseenter="handleMouseEnter"
       @mouseleave="handleMouseLeave"
     >
-      <FunctionList
+      <FunctionList v-if="isOwner"
         class="function-list"
         :type="{ del: true, update: true }"
         :id="favorite.id"
@@ -152,7 +159,7 @@ const handleMouseLeave = (el: MouseEvent) => {
       :visible="showEditModal"
       :favorite="editingFavorite"
       @close="showEditModal = false"
-      @saved="fetchList"
+      @saved="handleFavoriteSaved"
     />
 
     <Modal :visible="showDeleteModal" title="删除收藏夹" @close="showDeleteModal = false">

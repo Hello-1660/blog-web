@@ -7,9 +7,13 @@ const BASE_URL = '/favorite'
 
 /**
  * 获取收藏夹列表
+ * @param id 用户编号（不传为当前用户）
  * @returns 收藏夹列表
  */
-export function getFavoriteList(): Promise<Result<Favorite[]>> {
+export function getFavoriteList(id?: number): Promise<Result<Favorite[]>> {
+  if (id) {
+    return http.get(`${BASE_URL}/list/${id}`)
+  }
   return http.get(`${BASE_URL}/list`)
 }
 

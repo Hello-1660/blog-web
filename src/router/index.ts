@@ -66,6 +66,26 @@ const routes = [
         path: '/search',
         name: 'search',
         component: ArticleSearch,
+      },
+      {
+        path: '/email',
+        name: 'email',
+        component: () => import('@/views/EmailView.vue'),
+      },
+      {
+        path: '/history',
+        name: 'history',
+        component: () => import('@/views/HistoryView.vue'),
+      },
+      {
+        path: '/user/:id',
+        component: () => import('@/views/UserProfileView.vue'),
+        children: [
+          { path: '', redirect: to => ({ path: `/user/${to.params.id}/composition` }) },
+          { path: 'composition', name: 'userComposition', component: () => import('@/components/UserComposition.vue') },
+          { path: 'favorite', name: 'userFavorite', component: () => import('@/components/UserFavorite.vue') },
+          { path: 'like', name: 'userLike', component: () => import('@/components/UserLike.vue') },
+        ],
       }
     ]
   },

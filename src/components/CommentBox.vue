@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import EditorBox from './EditorBox.vue'
 import ContextMenu from './ContextMenu.vue'
 import type { CommentWithUserVo, CommentLevel, CommentDto } from '@/types/comment'
@@ -15,6 +16,8 @@ const porp = defineProps<{
   userId: number
   articleId: number
 }>()
+
+const router = useRouter()
 
 // 编辑框
 const editorBoxRef = ref<InstanceType<typeof EditorBox> | null>(null)
@@ -58,7 +61,7 @@ const getCurrentUserId = (): number | null => {
   const store = useUserStore()
   if (!store.token) return null
   try {
-    const payload = JSON.parse(atob(store.token.split('.')[1]))
+    const payload = JSON.parse(atob(store.token.split('.')[1]!))
     return parseInt(payload.sub) || null
   } catch {
     return null
@@ -284,10 +287,10 @@ onMounted(() => {
     <div class="comment-box">
       <div class="comment-item" v-if="commentLevel" v-for="item in commentLevel" :key="item.data.id"
       @contextmenu.prevent="handleContextMenu($event, item.data)">
-        <div class="comment-user-icon"><img :src="item.data.icon" alt="头像"></div>
+        <div class="comment-user-icon" @click.stop="router.push(`/user/${item.data.userId}`)"><img :src="item.data.icon" alt="头像"></div>
         <div class="comment-content">
           <div class="comment-user">
-            <div class="comment-user-name">{{ item.data.nickname }}</div>
+            <div class="comment-user-name" @click.stop="router.push(`/user/${item.data.userId}`)">{{ item.data.nickname }}</div>
             <div class="comment-author" v-if="item.data.userId === porp.userId">作者</div>
           </div>
 
@@ -307,11 +310,11 @@ onMounted(() => {
 
           <div class="respose-comment" v-show="item.isShow" v-for="child in item.chlidList" :key="child.id"
           @contextmenu.prevent="handleContextMenu($event, child)">
-            <div class="comment-user-icon"><img :src="child.icon" alt="头像"></div>
+            <div class="comment-user-icon" @click.stop="router.push(`/user/${child.userId}`)"><img :src="child.icon" alt="头像"></div>
             <div class="comment-content">
               <div class="comment-user">
-                <div class="comment-user-name">{{ child.nickname }}</div>  >
-                <div class="comment-user-name">{{ commentList.find(c => c.id === child.fid)?.nickname }}</div>
+                <div class="comment-user-name" @click.stop="router.push(`/user/${child.userId}`)">{{ child.nickname }}</div>  >
+                <div class="comment-user-name" @click.stop="router.push(`/user/${commentList.find(c => c.id === child.fid)?.userId}`)">{{ commentList.find(c => c.id === child.fid)?.nickname }}</div>
                 <div class="comment-author" v-if="child.userId === porp.userId">作者</div>
               </div>
 
@@ -403,6 +406,10 @@ onMounted(() => {
   margin-bottom: 10px;
 }
 
+.comment-user-icon {
+  cursor: pointer;
+}
+
 .comment-user-icon>img {
   width: 40px;
   height: 40px;
@@ -424,6 +431,11 @@ onMounted(() => {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  cursor: pointer;
+}
+
+.comment-user-name:hover {
+  text-decoration: underline;
 }
 
 .comment-author {
