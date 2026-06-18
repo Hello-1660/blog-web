@@ -6,14 +6,45 @@
 
 html {
   background-color: var(--base-bgc);
+  color: var(--font-color);
 }
 
 :root {
-  --base-bgc: #f5f5f5;
+  /* 页面背景 */
+  --base-bgc: #f0f2f5;
+  /* 卡片/面板背景 */
   --show-bgc: #ffffff;
-  --hover-bgc: #f5f5f5;
-  --font-color: #303030;
-  --font-base-color: #6c6c6c8a;
+  /* 悬停背景 */
+  --hover-bgc: #f0f2f5;
+  /* 主文字色 */
+  --font-color: #1a1a1a;
+  /* 次要文字色 */
+  --font-base-color: #8a8a8a;
+  /* 边框 */
+  --border-color: #e5e5e5;
+  /* 输入框背景 */
+  --input-bgc: #f5f5f5;
+  /* 代码块背景 */
+  --code-bgc: #f6f8fa;
+  /* 阴影 */
+  --shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+  /* 分割线 */
+  --divider-color: #e8e8e8;
+  /* 登录页背景图 */
+  --login-bgc-img: url('/login-bg.png');
+}
+
+html[data-theme="dark"] {
+  --base-bgc: #1a1a2e;
+  --show-bgc: #222244;
+  --hover-bgc: #2a2a4a;
+  --font-color: #e0e0e0;
+  --font-base-color: #9090a0;
+  --border-color: #3a3a5a;
+  --input-bgc: #2a2a44;
+  --code-bgc: #2a2a44;
+  --shadow: 0 2px 16px rgba(0, 0, 0, 0.35);
+  --divider-color: #3a3a5a;
   --login-bgc-img: url('/login-bg.png');
 }
 
@@ -35,7 +66,7 @@ a {
 @font-face {
   font-family: 'LocalSerif';
   src: url('/fonts/NotoSerifCJKsc-ExtraLight.woff2') format('woff2');
-  font-weight: 200; 
+  font-weight: 200;
   font-style: normal;
   font-display: swap;
 }
@@ -60,14 +91,13 @@ a {
 
 .div-hover-alt {
   position: fixed;
-  pointer-events: none; /* 不阻挡鼠标事件 */
+  pointer-events: none;
   background: rgba(0, 0, 0, 0.8);
   color: #fff;
   padding: 4px 8px;
   border-radius: 4px;
   font-size: 12px;
   z-index: 9999;
-  transform: translate(10px, 10px); /* 偏移一点，避免被鼠标挡住 */
-  white-space: nowrap; /* 防止文字换行 */
+  transform: translate(10px, 10px);
+  white-space: nowrap;
 }
-

@@ -32,3 +32,21 @@ export function clickCommentLike(id: number): Promise<Result<void>> {
 export function submitComment(comment: CommentDto): Promise<Result<CommentWithUserVo>> {
     return http.post(`${BASE_URL}/save`, comment)
 }
+
+/**
+ * 作者置顶/取消置顶评论
+ * @param id 评论编号
+ * @returns true 已置顶，false 已取消
+ */
+export function pinComment(id: number): Promise<Result<boolean>> {
+    return http.post(`${BASE_URL}/pin/${id}`)
+}
+
+/**
+ * 删除评论
+ * @param id 评论编号
+ * @returns 无
+ */
+export function deleteComment(id: number): Promise<Result<void>> {
+    return http.delete(`${BASE_URL}/delete/${id}`)
+}

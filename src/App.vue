@@ -1,9 +1,26 @@
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user'
 import { restoreTokens } from '@/utils/http'
+import { watch, onMounted } from 'vue'
 
 const userStore = useUserStore()
 restoreTokens(userStore.token, userStore.refreshToken)
+
+const applyTheme = (themeId: number | undefined) => {
+  if (themeId === 2) {
+    document.documentElement.setAttribute('data-theme', 'dark')
+  } else {
+    document.documentElement.removeAttribute('data-theme')
+  }
+}
+
+onMounted(() => {
+  applyTheme(userStore.userInfo?.themeId)
+})
+
+watch(() => userStore.userInfo?.themeId, (id) => {
+  applyTheme(id)
+})
 </script>
 
 <template>

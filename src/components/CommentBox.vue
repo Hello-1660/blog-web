@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import EditorBox from './EditorBox.vue'
+import ContextMenu from './ContextMenu.vue'
 import type { CommentWithUserVo, CommentLevel, CommentDto } from '@/types/comment'
+import type { ContextMenuItem } from '@/types/contextMenu'
 import { formatDate } from '@/utils/date'
-import { clickCommentLike, submitComment, getCommonList } from '@/apis/comment.ts'
+import { clickCommentLike, submitComment, getCommonList, pinComment, deleteComment } from '@/apis/comment.ts'
 import { resultPostProcessor } from '@/utils/result.ts'
 import showTopTip from './showTopTip.ts'
 import { stripHtml } from '@/utils/editor.ts'
+import { useUserStore } from '@/stores/user'
 
 const porp = defineProps<{
   userId: number
@@ -48,6 +51,110 @@ const getDodId = (comment: CommentWithUserVo): number => {
 /**
  * 处理评论层级
  */
+/**
+ * 从 JWT 解析当前用户 ID
+ */
+const getCurrentUserId = (): number | null => {
+  const store = useUserStore()
+  if (!store.token) return null
+  try {
+    const payload = JSON.parse(atob(store.token.split('.')[1]))
+    return parseInt(payload.sub) || null
+  } catch {
+    return null
+  }
+}
+
+// 右键菜单状态
+const ctxMenuShow = ref(false)
+const ctxMenuPos = ref({ x: 0, y: 0 })
+const ctxMenuItems = ref<ContextMenuItem[]>([])
+
+/**
+ * 右键菜单
+ */
+const handleContextMenu = (e: MouseEvent, comment: CommentWithUserVo) => {
+  e.preventDefault()
+  ctxMenuPos.value = { x: e.clientX, y: e.clientY }
+
+  const curId = getCurrentUserId()
+  const isAuthor = curId === porp.userId
+  const isOwner = curId === comment.userId
+
+  const items: ContextMenuItem[] = []
+
+  // 回复——所有人可见
+  items.push({
+    label: '回复',
+    onClick: () => handleResponse(comment),
+  })
+
+  // 置顶/取消置顶——仅作者
+  if (isAuthor) {
+    const isPinned = comment.sort != null && comment.sort > 0
+    items.push({
+      label: isPinned ? '取消置顶' : '置顶',
+      onClick: () => handleTogglePin(comment),
+    })
+  }
+
+  // 删除——作者或本人
+  if (isAuthor || isOwner) {
+    items.push({ divider: true, label: '', onClick: () => {} })
+    items.push({
+      label: '删除',
+      onClick: () => handleDeleteCommentItem(comment),
+    })
+  }
+
+  ctxMenuItems.value = items
+  ctxMenuShow.value = true
+}
+
+const handleTogglePin = async (comment: CommentWithUserVo) => {
+  const data = await pinComment(comment.id)
+  resultPostProcessor(data, {
+    success: () => {
+      comment.sort = data.data ? 1 : 0
+      // 本地重排，匹配后端 ORDER BY
+      commentList.value.sort((a, b) => {
+        const aPin = a.sort != null && a.sort > 0
+        const bPin = b.sort != null && b.sort > 0
+        if (aPin !== bPin) return aPin ? -1 : 1
+        if (aPin) return (b.sort || 0) - (a.sort || 0)
+        return new Date(b.createTime).getTime() - new Date(a.createTime).getTime()
+      })
+      processComments()
+      showTopTip({ type: 'success', message: data.data ? '已置顶' : '已取消置顶' })
+    },
+    failed: () => showTopTip({ type: 'error', message: '操作失败' })
+  })
+}
+
+const collectChildIds = (parentId: number): number[] => {
+  const ids: number[] = []
+  commentList.value.forEach(c => {
+    if (c.fid === parentId) {
+      ids.push(c.id)
+      ids.push(...collectChildIds(c.id))
+    }
+  })
+  return ids
+}
+
+const handleDeleteCommentItem = async (comment: CommentWithUserVo) => {
+  const data = await deleteComment(comment.id)
+  resultPostProcessor(data, {
+    success: () => {
+      const removeIds = new Set([comment.id, ...collectChildIds(comment.id)])
+      commentList.value = commentList.value.filter(c => !removeIds.has(c.id))
+      processComments()
+      showTopTip({ type: 'success', message: '已删除' })
+    },
+    failed: () => showTopTip({ type: 'error', message: '删除失败' })
+  })
+}
+
 const processComments = () => {
   const list: CommentLevel[] = []
   commentList.value.forEach((item) => {
@@ -175,7 +282,8 @@ onMounted(() => {
 <template>
   <div class="comment-container">
     <div class="comment-box">
-      <div class="comment-item" v-if="commentLevel" v-for="item in commentLevel" :key="item.data.id">
+      <div class="comment-item" v-if="commentLevel" v-for="item in commentLevel" :key="item.data.id"
+      @contextmenu.prevent="handleContextMenu($event, item.data)">
         <div class="comment-user-icon"><img :src="item.data.icon" alt="头像"></div>
         <div class="comment-content">
           <div class="comment-user">
@@ -197,7 +305,8 @@ onMounted(() => {
             </div>
           </div>
 
-          <div class="respose-comment" v-show="item.isShow" v-for="child in item.chlidList" :key="child.id">
+          <div class="respose-comment" v-show="item.isShow" v-for="child in item.chlidList" :key="child.id"
+          @contextmenu.prevent="handleContextMenu($event, child)">
             <div class="comment-user-icon"><img :src="child.icon" alt="头像"></div>
             <div class="comment-content">
               <div class="comment-user">
@@ -248,6 +357,13 @@ onMounted(() => {
         <svg t="1781785170990" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="17688"><path d="M512.005813 0C229.229613 0 0 229.229613 0 512.06394s229.229613 511.93606 512.005813 511.93606 511.982562-229.229613 511.982562-511.93606S794.770387 0 512.005813 0z m190.65654 475.804321a24.715598 24.715598 0 0 1-34.876197 0L536.663283 344.716324v393.577876a24.669096 24.669096 0 0 1-49.326566 0V344.716324L356.24872 475.804321a24.660958 24.660958 0 0 1-34.876196-34.876196l172.695298-172.672048a26.192023 26.192023 0 0 1 35.864356 0l172.683673 172.683673a24.715598 24.715598 0 0 1 0 34.864571z" p-id="17689" fill="#d81e06"></path></svg>
       </button>
     </div>
+
+    <ContextMenu
+      :items="ctxMenuItems"
+      :position="ctxMenuPos"
+      :show="ctxMenuShow"
+      @close="ctxMenuShow = false"
+    />
   </div>
 </template>
 
@@ -422,6 +538,7 @@ onMounted(() => {
   width: 40px;
   height: 40px;
   border: none;
+  background-color: transparent;
 }
 
 .comment-submit > svg {

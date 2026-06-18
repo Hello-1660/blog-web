@@ -7,6 +7,7 @@ import { formatDate } from '@/utils/date'
 import ActionBar from './ActionBar.vue'
 import CommentBox from './CommentBox.vue'
 import { resultPostProcessor } from '@/utils/result.ts'
+import { userBrowse } from '@/apis/user.ts'
 
 // 路由
 const router = useRouter()
@@ -25,6 +26,9 @@ onMounted(async () => {
     resultPostProcessor(data, {
       success: () => article.value = data.data
     })
+
+    // 添加用户浏览记录
+    userBrowse(id)
   }
 })
 </script>

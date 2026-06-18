@@ -94,3 +94,12 @@ export function getUserMsg(id?: number): Promise<Result<UserMsgVo>> {
     return http.get(`${BASE_URL}/userMsg`)
   }
 }
+
+/**
+ * 用户浏览文章记录
+ * @param id 文章编号
+ * @returns 无
+ */
+export function userBrowse(id: number): Promise<Result<void>> {
+  return http.post(`${BASE_URL}/browse`, null, { params: { articleId: id } } )
+}

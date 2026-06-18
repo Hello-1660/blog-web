@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user'
-import { ref, computed ,onUnmounted, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import SwitchButton from '@/components/SwitchButton.vue'
 import type { UserUpdateDto } from '@/types/user'
-import type { Theme } from '@/types/theme'
 import { imgUpload } from '@/utils/img'
 import { userUpdate } from '@/apis/user'
 import { resultPostProcessor } from '@/utils/result'
@@ -44,21 +43,6 @@ const router = useRouter()
 // 用户信息
 const userStore = useUserStore()
 const userInfoData = ref<UserUpdateDto>(new UserUpdateDtoObj())
-// 主题
-const themeList = ref<Theme[]>([
-  {
-    id: 0,
-    name: '亮色主题',
-    status: 1
-  },
-  {
-    id: 2,
-    name: '深色主题',
-    status: 1
-  }
-])
-// 是否下拉
-const isDropdown = ref(false)
 // 校验规则
 const dataValid = { 
   nickname: new RuleObj(/^.{2,16}$/, '只能在2-10个字符之间'),
@@ -79,31 +63,6 @@ const handleIconChange = async (e: any) => {
   } catch (err: any) {
     showTopTip({ type: 'error', message: err.message, duration: 3000 })
   }
-}
-
-/**
- * 下拉主题框
- */
-const handleThemeDropdown = (e: Event) => {
-  e.stopPropagation()
-  isDropdown.value = !isDropdown.value
-}
-
-/**
- * 单机主题条目
- * @param id 主题编号
- */
-const handleClickThemeItem = (id: number) => {
-  if (userInfoData.value) userInfoData.value.themeId = id 
-  isDropdown.value = true
-}
-
-/**
- * 监听点击外部
- * @param e 点击元素
- */
-const handleClickOutside = () => {
-  isDropdown.value = false
 }
 
 /**
@@ -173,17 +132,8 @@ onMounted(() => {
     userInfoData.value.icon = userStore.userInfo.icon || ''
     userInfoData.value.email = userStore.userInfo.email || ''
     userInfoData.value.description = userStore.userInfo.description || ''
-    userInfoData.value.themeId = userStore.userInfo.themeId ?? -1
     userInfoData.value.likeShowStatus = userStore.userInfo.likeShowStatus ?? -1
   }
-
-  // 添加点击外部监听
-  window.addEventListener('click', handleClickOutside)
-})
-
-onUnmounted(() => {
-  // 移除点击外部监听
-  window.removeEventListener('click', handleClickOutside)
 })
 </script>
 
@@ -220,29 +170,6 @@ onUnmounted(() => {
         </div>
         <input type="text" placeholder="介绍一下" v-model="userInfoData.description" />
         <span class="fail">{{ handleBlur(dataValid.description, userInfoData.description.trim()) }}</span> 
-      </div>
-
-      <div class="user-update-theme user-update-msg">
-        <div>
-          <svg t="1779933385342" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="18234" width="200" height="200"><path d="M512 960C264.533333 960 64 759.466667 64 512S264.533333 64 512 64 960 264.533333 960 512c0 81.066667-89.6 98.133333-170.666667 115.2-55.466667 12.8-110.933333 21.333333-132.266666 51.2-29.866667 34.133333-34.133333 85.333333-38.4 132.266667-8.533333 68.266667-12.8 149.333333-106.666667 149.333333z m0-853.333333c-221.866667 0-405.333333 183.466667-405.333333 405.333333s183.466667 405.333333 405.333333 405.333333c46.933333 0 55.466667-34.133333 64-110.933333 4.266667-55.466667 8.533333-115.2 46.933333-157.866667 34.133333-38.4 98.133333-51.2 157.866667-64 81.066667-17.066667 136.533333-29.866667 136.533333-72.533333 0-221.866667-183.466667-405.333333-405.333333-405.333333z" fill="#666666" p-id="18235"></path><path d="M597.333333 384c-46.933333 0-85.333333-38.4-85.333333-85.333333s38.4-85.333333 85.333333-85.333334 85.333333 38.4 85.333334 85.333334-38.4 85.333333-85.333334 85.333333z m0-128c-25.6 0-42.666667 17.066667-42.666666 42.666667s17.066667 42.666667 42.666666 42.666666 42.666667-17.066667 42.666667-42.666666-17.066667-42.666667-42.666667-42.666667zM341.333333 469.333333c-46.933333 0-85.333333-38.4-85.333333-85.333333s38.4-85.333333 85.333333-85.333333 85.333333 38.4 85.333334 85.333333-38.4 85.333333-85.333334 85.333333z m0-128c-25.6 0-42.666667 17.066667-42.666666 42.666667s17.066667 42.666667 42.666666 42.666667 42.666667-17.066667 42.666667-42.666667-17.066667-42.666667-42.666667-42.666667zM362.666667 746.666667c-46.933333 0-85.333333-38.4-85.333334-85.333334s38.4-85.333333 85.333334-85.333333 85.333333 38.4 85.333333 85.333333-38.4 85.333333-85.333333 85.333334z m0-128c-25.6 0-42.666667 17.066667-42.666667 42.666666 0 21.333333 17.066667 42.666667 42.666667 42.666667s42.666667-21.333333 42.666666-42.666667-17.066667-42.666667-42.666666-42.666666z" p-id="18236"></path></svg>        
-        </div>
-        <div class="user-update-theme-container">
-         <div class="user-update-theme-current"
-         @click="handleThemeDropdown"
-         >
-          <div class="user-update-theme-current-name">{{ themeList.find(item => item.id === userInfoData?.themeId)?.name }}</div>
-          <svg t="1779935856406" class="icon" :class="{ 'user-update-theme-svg-active' : isDropdown }" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="19712" width="200" height="200"><path d="M150.3 305.16c14.72-14.72 38.3-15.61 54.08-2.03l2.19 2.03L544.11 642.7l337.54-337.54c14.72-14.74 38.32-15.62 54.1-2.03l2.17 2.03c14.72 14.72 15.61 38.3 2.03 54.08l-2.03 2.19L586.3 713.04c-22.34 22.33-58.22 23.38-81.83 2.39l-2.55-2.39-351.64-351.63c-15.53-15.53-15.53-40.72 0-56.25h0.02z" p-id="19713"></path></svg>
-         </div>
-          <div class="user-update-theme-select"
-          :class="{'user-update-theme-container-active' : isDropdown}"
-          >
-            <div class="user-update-theme-select-item" 
-            v-for="theme in themeList" :key="theme.id"
-            @click="handleClickThemeItem(theme.id)">
-              {{ theme.name }}
-            </div>
-          </div>
-        </div>
       </div>
 
       <div class="user-update-like-show user-update-msg">
@@ -346,79 +273,6 @@ onUnmounted(() => {
   color: red;
   font-size: 14px;
   user-select: none;
-}
-
-.user-update-theme-container {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  width: 100px;
-}
-
-.user-update-theme-container-active {
-  max-height: 400px !important;
-  overflow-y: auto;
-}
-
-.user-update-theme {
-  display: flex;
-  align-items: center;
-}
-
-.user-update-theme-current {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100% !important;
-  height: 30px;
-  border-bottom: 1px solid #bcbcbc;
-}
-
-.user-update-theme-current-name {
-  flex: 0.8;
-  font-size: 16px;
-  color: var(--font-color);
-}
-
-.user-update-theme-current>.icon {
-  flex: 0.2;
-  width: 16px;
-  height: 16px;
-  fill: #686868;
-  margin-right: 5px;
-  transition: transform 0.3s ease-in-out;
-}
-
-.user-update-theme-svg-active {
-  transform: rotate(-180deg);
-}
-
-.user-update-theme-select {
-  position: absolute;
-  top: 33px;
-  left: 0px;
-  z-index: 100;
-  display: flex;
-  flex-direction: column;
-  border-radius: 8px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  max-height: 0;
-  transition: max-height 0.3s ease-in-out;
-}
-
-.user-update-theme-select-item {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100px !important;
-  height: 20px !important;
-  padding: 16px 0;
-  background: var(--show-bgc);
-}
-
-.user-update-theme-select-item:hover {
-  background-color: var(--hover-bgc);
 }
 
 .user-update-like-show {

@@ -4,11 +4,26 @@ import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
 import { logout } from '@/apis/token'
 import Modal from './Modal.vue'
+import SwitchButton from './SwitchButton.vue'
 
 // 用户信息
 const userStore = useUserStore()
-// 获取用户信息
 const user = ref(userStore.userInfo)
+
+// 主题
+const isDark = ref(document.documentElement.hasAttribute('data-theme'))
+const handleThemeSwitch = (dark: boolean) => {
+  isDark.value = dark
+  if (dark) {
+    document.documentElement.setAttribute('data-theme', 'dark')
+  } else {
+    document.documentElement.removeAttribute('data-theme')
+  }
+  if (userStore.userInfo) {
+    userStore.userInfo.themeId = dark ? 2 : 0
+  }
+}
+
 // 路由
 const router = useRouter()
 // 是否显示用户操作
@@ -87,6 +102,17 @@ const deleteUserData = async () => {
       </form>
     </div>   
 
+    <div class="theme-switch">
+      <SwitchButton :status="isDark" @switch-status="handleThemeSwitch">
+        <template #open>
+          <svg t="1780000000000" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="14" height="14"><path d="M512 960c-247 0-448-201-448-448s201-448 448-448 448 201 448 448-201 448-448 448z m0-64c212.1 0 384-171.9 384-384s-171.9-384-384-384-384 171.9-384 384 171.9 384 384 384z m-64-512c0-17.7 14.3-32 32-32h64c17.7 0 32 14.3 32 32v320c0 17.7-14.3 32-32 32h-64c-17.7 0-32-14.3-32-32v-320z m0-128c0-17.7 14.3-32 32-32h64c17.7 0 32 14.3 32 32v64c0 17.7-14.3 32-32 32h-64c-17.7 0-32-14.3-32-32v-64z" fill="currentColor"/></svg>
+        </template>
+        <template #close>
+          <svg t="1780000000000" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="14" height="14"><path d="M512 768c-141.4 0-256-114.6-256-256s114.6-256 256-256 256 114.6 256 256-114.6 256-256 256z m0-64c106 0 192-86 192-192s-86-192-192-192-192 86-192 192 86 192 192 192z m0-640c-17.7 0-32 14.3-32 32v64c0 17.7 14.3 32 32 32s32-14.3 32-32v-64c0-17.7-14.3-32-32-32z m0 768c-17.7 0-32 14.3-32 32v64c0 17.7 14.3 32 32 32s32-14.3 32-32v-64c0-17.7-14.3-32-32-32zM256 512c0-17.7-14.3-32-32-32h-64c-17.7 0-32 14.3-32 32s14.3 32 32 32h64c17.7 0 32-14.3 32-32z m640 0c0-17.7-14.3-32-32-32h-64c-17.7 0-32 14.3-32 32s14.3 32 32 32h64c17.7 0 32-14.3 32-32zM256 256c0-17.7-14.3-32-32-32h-64c-17.7 0-32 14.3-32 32s14.3 32 32 32h64c17.7 0 32-14.3 32-32z m640 0c0-17.7-14.3-32-32-32h-64c-17.7 0-32 14.3-32 32s14.3 32 32 32h64c17.7 0 32-14.3 32-32zM256 768c0-17.7-14.3-32-32-32h-64c-17.7 0-32 14.3-32 32s14.3 32 32 32h64c17.7 0 32-14.3 32-32z m640 0c0-17.7-14.3-32-32-32h-64c-17.7 0-32 14.3-32 32s14.3 32 32 32h64c17.7 0 32-14.3 32-32z" fill="currentColor"/></svg>
+        </template>
+      </SwitchButton>
+    </div>
+
     <div class="user-info">
       <div @click="handleToHome" class="user-icon"
       @mouseenter="handleMouseEnter"
@@ -140,7 +166,6 @@ const deleteUserData = async () => {
   height: 100%;
   display: flex;
   justify-content: center;
-  /* background-color: red; */
   padding: 20px 0;
 }
 
@@ -153,13 +178,13 @@ const deleteUserData = async () => {
   border-radius: 16px;
   box-shadow:  0 1px 6px 0 #20212447;
   padding-left: 20px;
+  background-color: #fff;
 }
 
 .search-bar input {
   width: calc(100% - 45px);
   height: 100%;
   font-size: 16px;
-  /* background-color: red; */
 }
 
 .search-button {
@@ -179,6 +204,16 @@ const deleteUserData = async () => {
   height: 20px;
   margin-left: 15px;
   fill: var(--font-color);
+}
+
+.theme-switch {
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+}
+
+.theme-switch .icon {
+  fill: var(--font-base-color);
 }
 
 .user-info {
